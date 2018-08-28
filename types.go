@@ -9,6 +9,7 @@ package ssllabs
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // LabsError is for whatever error we get from SSLLabs
@@ -406,4 +407,14 @@ type LabsInfo struct {
 	CurrentAssessments   int    `json:"currentAssessments"`
 	NewAssessmentCoolOff int64  `json:"newAssessmentCoolOff"`
 	Messages             []string
+}
+
+// Info describes what is returned by API call Info()
+type Info struct {
+	EngineVersion        string        `json:"engineVersion"`
+	CriteriaVersion      string        `json:"criteriaVersion"`
+	MaxAssessments       int           `json:"maxAssessments"`
+	CurrentAssessments   int           `json:"currentAssessments"`
+	NewAssessmentCoolOff time.Duration `json:"newAssessmentCoolOff"`
+	Messages             []string      `json:"messages"`
 }
