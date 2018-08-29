@@ -14,7 +14,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"keltia.net/ssllabs"
+	"github.com/keltia/ssllabs"
 )
 
 const (
