@@ -8,7 +8,7 @@ GOBIN=	${GOPATH}/bin
 
 GO=		go
 GSRCS=	cmd/ssllabs/main.go
-SRCS=	ssllabs.go ssllabs_subr.go types.go utils.go
+SRCS=	ssllabs.go subr.go types.go utils.go
 
 BIN=	ssllabs
 EXE=	${BIN}.exe
