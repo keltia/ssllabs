@@ -34,7 +34,7 @@ type Client struct {
 	retries   int
 	proxyauth string
 
-	client    *http.Client
+	client *http.Client
 }
 
 type Config struct {
@@ -93,7 +93,7 @@ func NewClient(cnf ...Config) (*Client, error) {
 		Timeout:       c.timeout,
 		CheckRedirect: myRedirect,
 	}
-	c.debug("mozilla: c=%#v", c)
+	c.debug("newclient: c=%#v", c)
 
 	return &Client{}, nil
 }
