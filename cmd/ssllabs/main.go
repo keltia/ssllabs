@@ -23,9 +23,10 @@ const (
 )
 
 var (
-	fDebug    bool
-	fDetailed bool
-	fVerbose  bool
+	fDebug       bool
+	fDetailed    bool
+	fVerbose     bool
+	fShowVersion bool
 
 	// MyName is the application name
 	MyName = filepath.Base(os.Args[0])
@@ -35,7 +36,14 @@ func init() {
 	flag.BoolVar(&fDetailed, "d", false, "Get a detailed report")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
+	flag.BoolVar(&fShowVersion, "V,version", false, "Display version & exit.")
 	flag.Parse()
+
+	if fShowVersion {
+		fmt.Fprintf(os.Stderr, "%s version %s API v3\n",
+			MyName, ssllabs.Version())
+		os.Exit(0)
+	}
 
 	if len(flag.Args()) == 0 {
 		log.Fatalf("You must give at least one site name!")
