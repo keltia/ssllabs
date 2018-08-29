@@ -78,7 +78,7 @@ func main() {
 		}
 
 		// Just dump the json
-		fmt.Printf("%s\n", report)
+		fmt.Printf("%v\n", report)
 	} else {
 		fmt.Printf("%s Wrapper: %s API version %s\n\n",
 			MyName, MyVersion, ssllabs.Version())
