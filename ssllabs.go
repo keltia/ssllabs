@@ -9,6 +9,10 @@ import (
 
 /*
 SSLabs API v3
+
+https://github.com/ssllabs/ssllabs-scan/blob/master/ssllabs-api-docs-v3.md
+
+GET only, no POST
 */
 
 const (
