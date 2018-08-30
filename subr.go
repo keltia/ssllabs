@@ -6,7 +6,6 @@ Package ssllabs contains SSLLabs-related functions.
 package ssllabs
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -38,28 +37,15 @@ func AddQueryParameters(baseURL string, queryParams map[string]string) string {
 
 // prepareRequest insert all pre-defined stuff
 func (c *Client) prepareRequest(method, what string, opts map[string]string) (req *http.Request) {
-	var endPoint string
+	endPoint := fmt.Sprintf("%s/%s", c.baseurl, what)
 
-	// This allow for overriding baseurl for tests
-	if c.baseurl != "" {
-		endPoint = fmt.Sprintf("%s/%s", c.baseurl, what)
-	} else {
-		endPoint = fmt.Sprintf("%s/%s", baseURL, what)
-	}
-
-	c.verbose("Options:\n%v", opts)
 	baseURL := AddQueryParameters(endPoint, opts)
+	c.verbose("Options:\n%v", opts)
 	c.debug("baseURL: %s", baseURL)
 
 	req, _ = http.NewRequest(method, baseURL, nil)
 
 	c.debug("req=%#v", req)
-
-	// We need these when we POST
-	if method == "POST" {
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Accept", "application/json")
-	}
 
 	return
 }
