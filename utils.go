@@ -31,10 +31,3 @@ func (c *Client) verbose(str string, a ...interface{}) {
 		log.Printf(str, a...)
 	}
 }
-
-// debug displays only if fVerbose is set
-func (c *Client) fatal(str string, a ...interface{}) {
-	if c.level >= 1 {
-		log.Fatalf(str, a...)
-	}
-}
