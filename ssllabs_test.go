@@ -132,6 +132,20 @@ func TestClient_Analyze(t *testing.T) {
 	assert.Empty(t, an)
 }
 
+func TestClient_Analyze_2(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: "http://localhost:10001"})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	an, err := c.Analyze("")
+	require.Error(t, err)
+	assert.Empty(t, an)
+}
+
 func TestClient_GetStatusCodes(t *testing.T) {
 	Before(t)
 	BeforeAPI(t)
