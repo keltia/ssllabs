@@ -120,7 +120,6 @@ func (c *Client) Info() (*LabsInfo, error) {
 
 	err = json.Unmarshal(raw, &li)
 	return &li, errors.Wrapf(err, "Info - %v", raw)
-	return nil, nil
 }
 
 // GetGrade is the basic call
