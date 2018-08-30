@@ -127,7 +127,6 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 			return body, errors.Wrapf(err, "status: %v body: %q", resp.Status, body)
 		}
 	}
-	return body, err
 }
 
 // Display for one report
