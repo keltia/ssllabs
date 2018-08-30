@@ -103,7 +103,8 @@ func NewClient(cnf ...Config) (*Client, error) {
 }
 
 // Info implements the Info() API call
-func (c *Client) Info() (*Info, error) {
+func (c *Client) Info() (*LabsInfo, error) {
+
 	return nil, nil
 }
 
@@ -115,6 +116,21 @@ func (c *Client) GetGrade(site string) (string, error) {
 // GetDetailedReport returns the full report
 func (c *Client) GetDetailedReport(site string) (LabsReport, error) {
 	return LabsReport{}, nil
+}
+
+// Analyze submit the given host for checking
+func (c *Client) Analyze(site string) (*LabsReport, error) {
+	return &LabsReport{}, nil
+}
+
+// GetEndpointData returns the endpoint data, no analyze run if not available
+func (c *Client) GetEndpointData(site string) (*LabsEndpoint, error) {
+	return &LabsEndpoint{}, nil
+}
+
+// GetStatusCodes returns all codes & their translation
+func (c *Client) GetStatusCodes() (*StatusCodes, error) {
+	return &StatusCodes{}, nil
 }
 
 // Version returns the API wrapper info
