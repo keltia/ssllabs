@@ -15,7 +15,11 @@ func TestMyRedirect(t *testing.T) {
 }
 
 func TestParseResults(t *testing.T) {
+	data, err := ParseResults([]byte{})
 
+	assert.Error(t, err)
+	assert.Empty(t, data)
+	assert.IsType(t, ([]LabsReport)(nil), data)
 }
 
 func TestAddQueryParameters(t *testing.T) {
