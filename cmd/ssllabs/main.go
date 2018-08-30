@@ -25,6 +25,7 @@ const (
 var (
 	fDebug       bool
 	fDetailed    bool
+	fInfo        bool
 	fVerbose     bool
 	fShowVersion bool
 
@@ -34,6 +35,7 @@ var (
 
 func init() {
 	flag.BoolVar(&fDetailed, "d", false, "Get a detailed report")
+	flag.BoolVar(&fInfo, "I", false, "Get SSLLabs info.")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
 	flag.BoolVar(&fShowVersion, "V", false, "Display version & exit.")
@@ -43,6 +45,11 @@ func init() {
 		fmt.Fprintf(os.Stderr, "%s version %s API v3\n",
 			MyName, ssllabs.Version())
 		os.Exit(0)
+	}
+
+	if fInfo {
+		fmt.Printf("SSLLabs server info:")
+		return
 	}
 
 	if len(flag.Args()) == 0 {
@@ -68,6 +75,16 @@ func main() {
 	c, err := ssllabs.NewClient(ssllabs.Config{Log: level})
 	if err != nil {
 		log.Fatalf("error setting up client: %v", err)
+	}
+
+	if fInfo {
+		info, err := c.Info()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v", err)
+			os.Exit(1)
+		}
+		fmt.Printf("SSLLabs Info\n%#v", info)
+		os.Exit(0)
 	}
 
 	if fDetailed {
