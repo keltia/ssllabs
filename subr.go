@@ -50,13 +50,13 @@ func (c *Client) prepareRequest(method, what string, opts map[string]string) (re
 	return
 }
 
-func (c *Client) callAPI(word, sbody string, opts map[string]string) ([]byte, error) {
+func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, error) {
 	var body []byte
 
 	retry := 0
 
 	c.debug("callAPI")
-	req := c.prepareRequest(word, "GET", opts)
+	req := c.prepareRequest("GET", what, opts)
 	if req == nil {
 		return []byte{}, errors.New("req is nil")
 	}
@@ -90,6 +90,11 @@ func (c *Client) callAPI(word, sbody string, opts map[string]string) ([]byte, er
 
 			c.debug("status OK")
 
+			// Early exit
+			if what != "analyze" {
+				return body, nil
+			}
+
 			// We wait for FINISHED state
 			if !strings.Contains(string(body), "FINISHED") {
 				time.Sleep(2 * time.Second)
@@ -107,7 +112,7 @@ func (c *Client) callAPI(word, sbody string, opts map[string]string) ([]byte, er
 
 			c.debug("Got 302 to %s", str)
 
-			req := c.prepareRequest(word, "GET", opts)
+			req := c.prepareRequest(what, "GET", opts)
 			if err != nil {
 				return []byte{}, errors.Wrap(err, "redirect")
 			}
