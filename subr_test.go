@@ -9,6 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestMyRedirect(t *testing.T) {
+	err := myRedirect(nil, nil)
+	require.NoError(t, err)
+}
+
 func TestParseResults(t *testing.T) {
 
 }
