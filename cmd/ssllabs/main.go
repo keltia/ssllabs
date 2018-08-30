@@ -36,7 +36,7 @@ func init() {
 	flag.BoolVar(&fDetailed, "d", false, "Get a detailed report")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
-	flag.BoolVar(&fShowVersion, "V,version", false, "Display version & exit.")
+	flag.BoolVar(&fShowVersion, "V", false, "Display version & exit.")
 	flag.Parse()
 
 	if fShowVersion {
