@@ -33,6 +33,17 @@ func TestNewClient2(t *testing.T) {
 }
 
 func TestNewClient3(t *testing.T) {
+	conf := Config{BaseURL: testURL, Log: 1}
+	c, err := NewClient(conf)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, c)
+	assert.NotEmpty(t, c)
+
+	assert.Equal(t, testURL, c.baseurl)
+}
+
+func TestNewClient4(t *testing.T) {
 	conf := Config{BaseURL: testURL, Log: 2}
 	c, err := NewClient(conf)
 
