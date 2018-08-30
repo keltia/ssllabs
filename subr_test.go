@@ -1,12 +1,12 @@
 package ssllabs
 
 import (
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
@@ -18,6 +18,11 @@ func TestParseResults(t *testing.T) {
 }
 
 func TestAddQueryParameters(t *testing.T) {
+	p := AddQueryParameters("", map[string]string{})
+	assert.Equal(t, "", p)
+}
+
+func TestAddQueryParameters_1(t *testing.T) {
 	p := AddQueryParameters("", map[string]string{"": ""})
 	assert.Equal(t, "?=", p)
 }

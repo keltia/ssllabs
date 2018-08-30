@@ -27,6 +27,9 @@ func myRedirect(req *http.Request, via []*http.Request) error {
 // AddQueryParameters adds query parameters to the URL.
 func AddQueryParameters(baseURL string, queryParams map[string]string) string {
 	params := url.Values{}
+	if len(queryParams) == 0 {
+		return baseURL
+	}
 	for key, value := range queryParams {
 		params.Add(key, value)
 	}
@@ -61,27 +64,19 @@ func (c *Client) prepareRequest(method, what string, opts map[string]string) (re
 	return
 }
 
-func (c *Client) callAPI(word, cmd, sbody string, opts map[string]string) ([]byte, error) {
+func (c *Client) callAPI(word, sbody string, opts map[string]string) ([]byte, error) {
 	var body []byte
 
 	retry := 0
 
 	c.debug("callAPI")
-	req := c.prepareRequest(word, cmd, opts)
+	req := c.prepareRequest(word, "GET", opts)
 	if req == nil {
 		return []byte{}, errors.New("req is nil")
 	}
 
 	c.debug("clt=%#v", c.client)
 	c.debug("opts=%v", opts)
-
-	// If we have a POST and a body, insert them.
-	if sbody != "" && word == "POST" {
-		body := []byte(sbody)
-		buf := bytes.NewReader(body)
-		req.Body = ioutil.NopCloser(buf)
-		req.ContentLength = int64(buf.Len())
-	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -126,7 +121,7 @@ func (c *Client) callAPI(word, cmd, sbody string, opts map[string]string) ([]byt
 
 			c.debug("Got 302 to %s", str)
 
-			req := c.prepareRequest(word, cmd, opts)
+			req := c.prepareRequest(word, "GET", opts)
 			if err != nil {
 				return []byte{}, errors.Wrap(err, "redirect")
 			}
