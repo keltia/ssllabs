@@ -109,7 +109,17 @@ func NewClient(cnf ...Config) (*Client, error) {
 
 // Info implements the Info() API call
 func (c *Client) Info() (*LabsInfo, error) {
+	// No parameter
+	opts := map[string]string{}
+	raw, err := c.callAPI("info", "", opts)
+	if err != nil {
+		return &LabsInfo{}, errors.Wrap(err, "Info")
+	}
 
+	var li LabsInfo
+
+	err = json.Unmarshal(raw, &li)
+	return &li, errors.Wrapf(err, "Info - %v", raw)
 	return nil, nil
 }
 

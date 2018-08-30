@@ -67,9 +67,15 @@ func BeforeAPI(t *testing.T) {
 	// define request->response pairs
 	request1, _ := url.Parse(testURL + "/analyze?host=lbl.gov")
 	request2, _ := url.Parse(testURL + "/getStatusCodes")
+	request3, _ := url.Parse(testURL + "/info")
 
 	ftr, err := ioutil.ReadFile("testdata/statuscodes.json")
-	assert.NoError(t, err)
+	require.NoError(t, err)
+	require.NotEmpty(t, ftr)
+
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
 
 	aresp := []httpmock.MockResponse{
 		{
@@ -92,6 +98,16 @@ func BeforeAPI(t *testing.T) {
 				Body:       string(ftr),
 			},
 		},
+		{
+			Request: http.Request{
+				Method: "GET",
+				URL:    request3,
+			},
+			Response: httpmock.Response{
+				StatusCode: 200,
+				Body:       string(fti),
+			},
+		},
 	}
 
 	mockService.AddResponses(aresp)
@@ -110,6 +126,20 @@ func TestClient_GetStatusCodes(t *testing.T) {
 	sc, err := c.GetStatusCodes()
 	require.NoError(t, err)
 	assert.NotEmpty(t, sc)
+}
+
+func TestClient_Info(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	info, err := c.Info()
+	require.NoError(t, err)
+	assert.NotEmpty(t, info)
 }
 
 func TestVersion(t *testing.T) {
