@@ -1,14 +1,14 @@
 ssllabs
 ==========
 
-[![GitHub release](https://img.shields.io/github/release/keltia/ssllabs.svg)](https://keltia.net/ssllabs/releases)
-[![GitHub issues](https://img.shields.io/github/issues/keltia/ssllabs.svg)](https://keltia.net/ssllabs/issues)
+[![GitHub release](https://img.shields.io/github/release/keltia/ssllabs.svg)](https://github.com/keltia/ssllabs/releases)
+[![GitHub issues](https://img.shields.io/github/issues/keltia/ssllabs.svg)](https://github.com/keltia/ssllabs/issues)
 [![Go Version](https://img.shields.io/badge/go-1.10-blue.svg)](https://golang.org/dl/)
-[![Build Status](https://travis-ci.org/keltia/ssllabs.svg?branch=master)](https://travis-ci.org/keltia/ssllabs)
-[![GoDoc](http://godoc.org/keltia.net/ssllabs?status.svg)](http://godoc.org/keltia.net/ssllabs)
+[![Build Status](https://travis-ci.org/github.com/keltia/ssllabs.svg?branch=master)](https://travis-ci.org/github.com/keltia/ssllabs)
+[![GoDoc](http://godoc.org/github.com/keltia/ssllabs?status.svg)](http://godoc.org/github.com/keltia/ssllabs)
 [![SemVer](http://img.shields.io/SemVer/2.0.0.png)](https://semver.org/spec/v2.0.0.html)
 [![License](https://img.shields.io/pypi/l/Django.svg)](https://opensource.org/licenses/BSD-2-Clause)
-[![Go Report Card](https://goreportcard.com/badge/keltia.net/ssllabs)](https://goreportcard.com/report/keltia.net/ssllabs)
+[![Go Report Card](https://goreportcard.com/badge/github.com/keltia/ssllabs)](https://goreportcard.com/report/github.com/keltia/ssllabs)
 
 Go wrapper for the [SSLLabs](https://ssllabs.com/) API for testing TLS parameters of a given website.
 
