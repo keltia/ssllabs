@@ -71,7 +71,7 @@ type LabsCert struct {
 	RevocationStatus       int           `json:"revocationStatus"`
 	CrlRevocationStatus    int           `json:"crlRevocationStatus"`
 	OcspRevocationStatus   int           `json:"ocspRevocationStatus"`
-	DnsCaa                 bool          `json:"dnsCaa"`
+	DNSCaa                 bool          `json:"dnsCaa"`
 	CaaPolicy              LabsCaaPolicy `json:"caaPolicy"`
 	MustStaple             bool          `json:"mustStaple"`
 	Sgc                    int
@@ -136,7 +136,7 @@ type LabsSimulation struct {
 	ErrorCode      int    `json:"errorCode"`
 	ErrorMessage   string `json:"errorMessage"`
 	Attempts       int
-	CertChainId    string `json:"certChainId"`
+	CertChainID    string `json:"certChainId"`
 	ProtocolID     int    `json:"protocolId"`
 	SuiteID        int    `json:"suiteId"`
 	SuiteName      string `json:"suiteName"`
@@ -147,7 +147,7 @@ type LabsSimulation struct {
 	DHG            int    `json:"dhG"`
 	DHYs           int    `json:"dhYs"`
 	NamedGroupBits int    `json:"namedGroupBits"`
-	NamedGroupId   int    `json:"namedGroupId"`
+	NamedGroupID   int    `json:"namedGroupId"`
 	NamedGroupName string `json:"namedGroupName"`
 	AlertType      int    `json:"alertType"`
 	AlertCode      int    `json:"alertCode"`
@@ -173,7 +173,7 @@ type LabsSuite struct {
 	DHG            int    `json:"dhG"`
 	DHYs           int    `json:"dhYs"`
 	NamedGroupBits int    `json:"namedGroupBits"`
-	NamedGroupId   int    `json:"namedGroupId"`
+	NamedGroupID   int    `json:"namedGroupId"`
 	NamedGroudName string `json:"namedGroupName"`
 	Q              int
 }
@@ -216,6 +216,7 @@ type LabsHpkpPin struct {
 	Value        string
 }
 
+// LabsHpkpDirective is related to HPKP handling
 type LabsHpkpDirective struct {
 	Name  string
 	Value string
@@ -244,6 +245,7 @@ type LabsDrownHost struct {
 	Status  string
 }
 
+// LabsCertChain is the list of certificates
 type LabsCertChain struct {
 	ID        string
 	CertIds   []string        `json:"certIds"`
@@ -252,6 +254,7 @@ type LabsCertChain struct {
 	NoSni     bool `json:"noSni"`
 }
 
+// LabsTrustPath defines the path of trust in cert chain
 type LabsTrustPath struct {
 	CertIds       []string    `json:"certIds"`
 	Trust         []LabsTrust `json:"trust"`
@@ -260,35 +263,40 @@ type LabsTrustPath struct {
 	UnMatchedPins int         `json:"unMatchedPins"`
 }
 
+// LabsTrust identifies the cert store for trust
 type LabsTrust struct {
 	RootStore         string `json:"rootStore"`
 	IsTrusted         bool   `json:"isTrusted"`
 	TrustErrorMessage string `json:"trustErrorMessage"`
 }
 
+// LabsNamedGroups is for groups
 type LabsNamedGroups struct {
 	List       []LabsNamedGroup
 	Preference bool
 }
 
+// LabsNamedGroup is a group
 type LabsNamedGroup struct {
 	ID   int
 	Name string
 	Bits int
 }
 
-type LabsHttpTransaction struct {
-	RequestUrl        string           `json:"requestUrl"`
+// LabsHTTPTransaction gives the entire request/response
+type LabsHTTPTransaction struct {
+	RequestURL        string           `json:"requestUrl"`
 	StatusCode        int              `json:"statusCode"`
 	RequestLine       string           `json:"requestLine"`
 	RequestHeaders    []string         `json:"requestHeaders"`
 	ResponseLine      string           `json:"responseLine"`
 	ResponseRawHeader []string         `json:"responseRawHeader"`
-	ResponseHeader    []LabsHttpHeader `json:"responseHeader"`
+	ResponseHeader    []LabsHTTPHeader `json:"responseHeader"`
 	FragileServer     bool             `json:"fragileServer"`
 }
 
-type LabsHttpHeader struct {
+// LabsHTTPHeader is obvious
+type LabsHTTPHeader struct {
 	Name  string
 	Value string
 }
