@@ -1,6 +1,8 @@
 package ssllabs // import "github.com/keltia/ssllabs"
 
 import (
+	"encoding/json"
+	"github.com/pkg/errors"
 	"net/http"
 	"time"
 
@@ -120,17 +122,60 @@ func (c *Client) GetDetailedReport(site string) (LabsReport, error) {
 
 // Analyze submit the given host for checking
 func (c *Client) Analyze(site string) (*LabsReport, error) {
-	return &LabsReport{}, nil
+	// Default parameters
+	opts := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
+	raw, err := c.callAPI("analyze", "", opts)
+	if err != nil {
+		return &LabsReport{}, errors.Wrap(err, "Analyze")
+	}
+
+	var lr LabsReport
+
+	err = json.Unmarshal(raw, &lr)
+	return &lr, errors.Wrapf(err, "Analyze - %v", raw)
 }
 
 // GetEndpointData returns the endpoint data, no analyze run if not available
 func (c *Client) GetEndpointData(site string) (*LabsEndpoint, error) {
-	return &LabsEndpoint{}, nil
+	// Default parameters
+	opts := map[string]string{
+		"host":      site,
+		"fromCache": "on",
+	}
+
+	raw, err := c.callAPI("getEndpointData", "", opts)
+	if err != nil {
+		return &LabsEndpoint{}, errors.Wrap(err, "GetEndpointData")
+	}
+
+	var le LabsEndpoint
+
+	err = json.Unmarshal(raw, &le)
+	return &le, errors.Wrapf(err, "GetEndpointData - %v", raw)
 }
 
 // GetStatusCodes returns all codes & their translation
 func (c *Client) GetStatusCodes() (*StatusCodes, error) {
-	return &StatusCodes{}, nil
+	// No parameters
+	opts := map[string]string{}
+
+	raw, err := c.callAPI("getStatusCodes", "", opts)
+	if err != nil {
+		return &StatusCodes{}, errors.Wrap(err, "GetStatusCodes")
+	}
+
+	var sc StatusCodes
+
+	err = json.Unmarshal(raw, &sc)
+	return &sc, errors.Wrapf(err, "GetStatusCodes - %v", string(raw))
 }
 
 // Version returns the API wrapper info
