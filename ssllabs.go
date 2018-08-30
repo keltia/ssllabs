@@ -1,4 +1,4 @@
-package ssllabs // import "keltia/net/ssllabs"
+package ssllabs // import "github.com/keltia/ssllabs"
 
 import (
 	"net/http"
@@ -95,7 +95,7 @@ func NewClient(cnf ...Config) (*Client, error) {
 	}
 	c.debug("newclient: c=%#v", c)
 
-	return &Client{}, nil
+	return c, nil
 }
 
 // Info implements the Info() API call
