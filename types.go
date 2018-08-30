@@ -418,3 +418,8 @@ type Info struct {
 	NewAssessmentCoolOff time.Duration `json:"newAssessmentCoolOff"`
 	Messages             []string      `json:"messages"`
 }
+
+// StatusCodes describes all possible status code & translations
+type StatusCodes struct {
+	StatusDetails map[string]string `json:"statusDetails"`
+}
