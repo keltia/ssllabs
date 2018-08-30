@@ -4,7 +4,7 @@ ssllabs
 [![GitHub release](https://img.shields.io/github/release/keltia/ssllabs.svg)](https://github.com/keltia/ssllabs/releases)
 [![GitHub issues](https://img.shields.io/github/issues/keltia/ssllabs.svg)](https://github.com/keltia/ssllabs/issues)
 [![Go Version](https://img.shields.io/badge/go-1.10-blue.svg)](https://golang.org/dl/)
-[![Build Status](https://travis-ci.org/github.com/keltia/ssllabs.svg?branch=master)](https://travis-ci.org/github.com/keltia/ssllabs)
+[![Build Status](https://travis-ci.org/keltia/ssllabs.svg?branch=master)](https://travis-ci.org/keltia/ssllabs)
 [![GoDoc](http://godoc.org/github.com/keltia/ssllabs?status.svg)](http://godoc.org/github.com/keltia/ssllabs)
 [![SemVer](http://img.shields.io/SemVer/2.0.0.png)](https://semver.org/spec/v2.0.0.html)
 [![License](https://img.shields.io/pypi/l/Django.svg)](https://opensource.org/licenses/BSD-2-Clause)
