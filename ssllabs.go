@@ -33,6 +33,7 @@ const (
 	MyName = "ssllabs"
 )
 
+// Client is the main datatype for requests
 type Client struct {
 	baseurl   string
 	level     int
@@ -43,6 +44,7 @@ type Client struct {
 	client *http.Client
 }
 
+// Config is for the client configuration
 type Config struct {
 	BaseURL string
 	Log     int
@@ -50,6 +52,7 @@ type Config struct {
 	Retries int
 }
 
+// NewClient create the context for new connections
 func NewClient(cnf ...Config) (*Client, error) {
 	var c *Client
 
