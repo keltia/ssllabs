@@ -96,7 +96,7 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 			}
 
 			// We wait for FINISHED state
-			if !strings.Contains(string(body), "FINISHED") {
+			if !strings.Contains(string(body), "READY") {
 				time.Sleep(2 * time.Second)
 				retry++
 				resp, err = c.client.Do(req)
