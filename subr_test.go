@@ -9,10 +9,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	testURL = "http://localhost:1000"
-)
-
 func TestParseResults(t *testing.T) {
 
 }
@@ -43,6 +39,21 @@ func TestPrepareRequest(t *testing.T) {
 	assert.IsType(t, (*http.Request)(nil), req)
 
 	res, _ := url.Parse(testURL + "/foo")
+	assert.Equal(t, "GET", req.Method)
+	assert.EqualValues(t, res, req.URL)
+}
+
+func TestPrepareRequest_2(t *testing.T) {
+	c, err := NewClient()
+	require.NoError(t, err)
+
+	opts := map[string]string{}
+	req := c.prepareRequest("GET", "foo", opts)
+
+	assert.NotNil(t, req)
+	assert.IsType(t, (*http.Request)(nil), req)
+
+	res, _ := url.Parse(baseURL + "/foo")
 	assert.Equal(t, "GET", req.Method)
 	assert.EqualValues(t, res, req.URL)
 }
