@@ -89,6 +89,7 @@ func NewClient(cnf ...Config) (*Client, error) {
 		c.debug("got cnf: %#v", cnf[0])
 	}
 
+	c.verbose("client created")
 	// We do not care whether it fails or not, if it does, just no proxyauth.
 	proxyauth, _ := proxy.SetupProxyAuth()
 
