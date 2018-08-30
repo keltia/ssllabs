@@ -97,7 +97,7 @@ type LabsChainCert struct {
 	IssuerLabel          string `json:"issuerLabel"`
 	SigAlg               string `json:"sigAlg"`
 	Issues               int
-	KeyAlg               string `json:"sigAlg"`
+	KeyAlg               string `json:"keyAlg"`
 	KeySize              int    `json:"keySize"`
 	KeyStrength          int    `json:"keyStrength"`
 	RevocationStatus     int    `json:"revocationStatus"`
