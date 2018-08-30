@@ -65,9 +65,13 @@ func BeforeAPI(t *testing.T) {
 	require.NotNil(t, mockService)
 
 	// define request->response pairs
-	request1, _ := url.Parse(testURL + "/analyze?host=lbl.gov")
+	request1, _ := url.Parse(testURL + "/analyze?host=")
 	request2, _ := url.Parse(testURL + "/getStatusCodes")
 	request3, _ := url.Parse(testURL + "/info")
+
+	fte, err := ioutil.ReadFile("testdata/emptyanalyze.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fte)
 
 	ftr, err := ioutil.ReadFile("testdata/statuscodes.json")
 	require.NoError(t, err)
@@ -85,7 +89,7 @@ func BeforeAPI(t *testing.T) {
 			},
 			Response: httpmock.Response{
 				StatusCode: 200,
-				Body:       "done",
+				Body:       string(fte),
 			},
 		},
 		{
@@ -112,6 +116,20 @@ func BeforeAPI(t *testing.T) {
 
 	mockService.AddResponses(aresp)
 	//t.Logf("respmap=%v", mockService.ResponseMap)
+}
+
+func TestClient_Analyze(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	an, err := c.Analyze("")
+	require.Error(t, err)
+	assert.Empty(t, an)
 }
 
 func TestClient_GetStatusCodes(t *testing.T) {
