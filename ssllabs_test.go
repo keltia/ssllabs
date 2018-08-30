@@ -32,3 +32,8 @@ func TestNewClient3(t *testing.T) {
 
 	assert.Equal(t, testURL, c.baseurl)
 }
+
+func TestVersion(t *testing.T) {
+	v := Version()
+	assert.Equal(t, MyVersion, v)
+}
