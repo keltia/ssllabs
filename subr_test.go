@@ -66,3 +66,13 @@ func TestPrepareRequest_2(t *testing.T) {
 	assert.Equal(t, "GET", req.Method)
 	assert.EqualValues(t, res, req.URL)
 }
+
+func TestLabsErrorResponse_Error(t *testing.T) {
+	var empty = "{\"errors\":null}"
+
+	e := LabsErrorResponse{}
+	msg := e.Error()
+
+	assert.NotEmpty(t, msg)
+	assert.Equal(t, empty, msg)
+}
