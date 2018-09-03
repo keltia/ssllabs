@@ -99,3 +99,32 @@ func TestLabsErrorResponse_Error3(t *testing.T) {
 	assert.NotEmpty(t, msg)
 	assert.Equal(t, err, msg)
 }
+
+func TestMergeOptions(t *testing.T) {
+	o1 := make(map[string]string)
+	o2 := make(map[string]string)
+
+	o3 := mergeOptions(o1, o2)
+	require.Empty(t, o3)
+	assert.EqualValues(t, o3, o1)
+	assert.EqualValues(t, o3, o2)
+}
+
+func TestMergeOptions2(t *testing.T) {
+	o1 := map[string]string{"foo": "bar"}
+	o2 := make(map[string]string)
+
+	o3 := mergeOptions(o1, o2)
+	require.NotEmpty(t, o3)
+	assert.EqualValues(t, o1, o3)
+}
+
+func TestMergeOptions3(t *testing.T) {
+	o1 := map[string]string{"foo": "bar"}
+	o2 := map[string]string{"baz": "xyzt"}
+	ot := map[string]string{"baz": "xyzt", "foo": "bar"}
+
+	o3 := mergeOptions(o1, o2)
+	require.NotEmpty(t, o3)
+	assert.EqualValues(t, ot, o3)
+}

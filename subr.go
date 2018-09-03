@@ -146,3 +146,10 @@ func ParseResults(content []byte) (r []LabsReport, err error) {
 	err = json.Unmarshal(content, &data)
 	return data, errors.Wrap(err, "unmarshal")
 }
+
+func mergeOptions(opts, o map[string]string) map[string]string {
+	for i, opt := range o {
+		opts[i] = opt
+	}
+	return opts
+}
