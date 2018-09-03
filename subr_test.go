@@ -76,3 +76,26 @@ func TestLabsErrorResponse_Error(t *testing.T) {
 	assert.NotEmpty(t, msg)
 	assert.Equal(t, empty, msg)
 }
+
+func TestLabsErrorResponse_Error2(t *testing.T) {
+	var empty = "{\"errors\":[{\"Field\":\"\",\"Message\":\"\"}]}"
+
+	e := LabsErrorResponse{ResponseErrors: []LabsError{{"", ""}}}
+	msg := e.Error()
+
+	assert.NotEmpty(t, msg)
+	assert.Equal(t, empty, msg)
+}
+
+func TestLabsErrorResponse_Error3(t *testing.T) {
+	var err = "{\"errors\":[{\"Field\":\"\\ufffd\\ufffd\",\"Message\":\"\"}]}"
+
+	e := LabsErrorResponse{ResponseErrors: []LabsError{
+		{string([]byte{155, 134}), ""},
+	},
+	}
+	msg := e.Error()
+
+	assert.NotEmpty(t, msg)
+	assert.Equal(t, err, msg)
+}
