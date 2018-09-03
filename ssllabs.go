@@ -123,8 +123,40 @@ func (c *Client) Info() (*LabsInfo, error) {
 	return &li, errors.Wrapf(err, "Info - %v", raw)
 }
 
-// GetGrade is the basic call
-func (c *Client) GetGrade(site string) (string, error) {
+// GetGrade is the basic call — equal to getEndpointData and extracting just the grade.
+func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, error) {
+	opts := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
+	// Override default options
+	if myopts != nil {
+		for _, o := range myopts {
+			opts = mergeOptions(opts, o)
+		}
+	}
+
+	raw, err := c.callAPI("getEndpointData", "", opts)
+	if err != nil {
+		return "", errors.Wrap(err, "GetGrade")
+	}
+
+	var lr LabsReport
+
+	err = json.Unmarshal(raw, &lr)
+	if err != nil {
+		return "", err
+	}
+
+	if len(lr.Endpoints) != 0 {
+		return lr.Endpoints[0].Grade, errors.Wrapf(err, "GetGrade - %v", raw)
+	}
+
 	return "", nil
 }
 
@@ -134,15 +166,22 @@ func (c *Client) GetDetailedReport(site string) (LabsReport, error) {
 }
 
 // Analyze submit the given host for checking
-func (c *Client) Analyze(site string) (*LabsReport, error) {
+func (c *Client) Analyze(site string, myopts ...map[string]string) (*LabsReport, error) {
 	// Default parameters
 	opts := map[string]string{
 		"host":           site,
 		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
-		"fromCache":      "on",
+		"fromCache":      "off",
 		"ignoreMismatch": "on",
+	}
+
+	// Override default options
+	if myopts != nil {
+		for _, o := range myopts {
+			opts = mergeOptions(opts, o)
+		}
 	}
 
 	raw, err := c.callAPI("analyze", "", opts)
@@ -157,11 +196,18 @@ func (c *Client) Analyze(site string) (*LabsReport, error) {
 }
 
 // GetEndpointData returns the endpoint data, no analyze run if not available
-func (c *Client) GetEndpointData(site string) (*LabsEndpoint, error) {
+func (c *Client) GetEndpointData(site string, myopts ...map[string]string) (*LabsEndpoint, error) {
 	// Default parameters
 	opts := map[string]string{
 		"host":      site,
 		"fromCache": "on",
+	}
+
+	// Override default options
+	if myopts != nil {
+		for _, o := range myopts {
+			opts = mergeOptions(opts, o)
+		}
 	}
 
 	raw, err := c.callAPI("getEndpointData", "", opts)
