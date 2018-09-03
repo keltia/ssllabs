@@ -77,20 +77,10 @@ func BeforeAPI(t *testing.T) {
 
 	// define request->response pairs
 	request1, _ := url.Parse(testURL + "/analyze?host=")
-	request2, _ := url.Parse(testURL + "/getStatusCodes")
-	request3, _ := url.Parse(testURL + "/info")
 
 	fte, err := ioutil.ReadFile("testdata/emptyanalyze.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fte)
-
-	ftr, err := ioutil.ReadFile("testdata/statuscodes.json")
-	require.NoError(t, err)
-	require.NotEmpty(t, ftr)
-
-	fti, err := ioutil.ReadFile("testdata/info.json")
-	require.NoError(t, err)
-	require.NotEmpty(t, fti)
 
 	aresp := []httpmock.MockResponse{
 		{
@@ -101,26 +91,6 @@ func BeforeAPI(t *testing.T) {
 			Response: httpmock.Response{
 				StatusCode: 200,
 				Body:       string(fte),
-			},
-		},
-		{
-			Request: http.Request{
-				Method: "GET",
-				URL:    request2,
-			},
-			Response: httpmock.Response{
-				StatusCode: 200,
-				Body:       string(ftr),
-			},
-		},
-		{
-			Request: http.Request{
-				Method: "GET",
-				URL:    request3,
-			},
-			Response: httpmock.Response{
-				StatusCode: 200,
-				Body:       string(fti),
 			},
 		},
 	}
@@ -143,7 +113,7 @@ func TestClient_Analyze(t *testing.T) {
 	assert.Empty(t, an)
 }
 
-func TestClient_Analyze_2(t *testing.T) {
+func TestClient_Analyze2(t *testing.T) {
 	Before(t)
 	BeforeAPI(t)
 
@@ -157,9 +127,44 @@ func TestClient_Analyze_2(t *testing.T) {
 	assert.Empty(t, an)
 }
 
+func TestClient_Analyze3(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	opts := map[string]string{"foo": "bar"}
+
+	an, err := c.Analyze("", opts)
+	require.Error(t, err)
+	assert.Empty(t, an)
+}
+
 func TestClient_GetStatusCodes(t *testing.T) {
 	Before(t)
 	BeforeAPI(t)
+
+	request, _ := url.Parse(testURL + "/getStatusCodes")
+
+	ftr, err := ioutil.ReadFile("testdata/statuscodes.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, ftr)
+
+	aresp := httpmock.MockResponse{
+		Request: http.Request{
+			Method: "GET",
+			URL:    request,
+		},
+		Response: httpmock.Response{
+			StatusCode: 200,
+			Body:       string(ftr),
+		},
+	}
+
+	mockService.AddResponse(aresp)
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
@@ -175,6 +180,23 @@ func TestClient_Info(t *testing.T) {
 	Before(t)
 	BeforeAPI(t)
 
+	request, _ := url.Parse(testURL + "/info")
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	aresp := httpmock.MockResponse{
+		Request: http.Request{
+			Method: "GET",
+			URL:    request,
+		},
+		Response: httpmock.Response{
+			StatusCode: 200,
+			Body:       string(fti),
+		},
+	}
+	mockService.AddResponse(aresp)
+
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
@@ -183,6 +205,66 @@ func TestClient_Info(t *testing.T) {
 	info, err := c.Info()
 	require.NoError(t, err)
 	assert.NotEmpty(t, info)
+}
+
+func TestClient_GetGrade(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	grade, err := c.GetGrade("lbl.gov")
+	assert.Error(t, err)
+	assert.Empty(t, grade)
+}
+
+func TestClient_GetGrade2(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	opts := map[string]string{"foo": "bar"}
+
+	grade, err := c.GetGrade("lbl.gov", opts)
+	assert.Error(t, err)
+	assert.Empty(t, grade)
+}
+
+func TestClient_GetEndpointData(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	grade, err := c.GetEndpointData("lbl.gov")
+	assert.Error(t, err)
+	assert.Empty(t, grade)
+}
+
+func TestClient_GetEndpointData2(t *testing.T) {
+	Before(t)
+	BeforeAPI(t)
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	opts := map[string]string{"foo": "bar"}
+
+	grade, err := c.GetGrade("lbl.gov", opts)
+	assert.Error(t, err)
+	assert.Empty(t, grade)
 }
 
 func TestVersion(t *testing.T) {
