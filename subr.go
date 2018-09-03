@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"strings"
 	"time"
@@ -130,13 +129,14 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 }
 
 // Display for one report
-func (rep *LabsReport) String() {
+func (rep *LabsReport) String() string {
 	host := rep.Host
 	if len(rep.Endpoints) != 0 {
 		grade := rep.Endpoints[0].Grade
 		//details := rep.Endpoints[0].Details
-		log.Printf("Looking at %s — grade %s", host, grade)
+		return fmt.Sprintf("Looking at %s — grade %s", host, grade)
 	}
+	return ""
 }
 
 // ParseResults unmarshals the json payload
