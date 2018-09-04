@@ -38,7 +38,11 @@ As with many API wrappers, you will need to first create a client with some opti
         log.Fatalf("error: %v", err)
     }
 
+```
 
+With options:
+
+``` go
     // With some options, timeout at 15s, caching for 10s and debug-like verbosity
     cnf := ssllabs.Config{
         Timeout:15,
@@ -52,19 +56,6 @@ As with many API wrappers, you will need to first create a client with some opti
     }
 ```
 
-For the `GetDetailedReport()` call, the raw JSON object will be returned (and presumably handled by `jq`).
-
-``` go
-    // Simplest way
-    c, _ := ssllabs.NewClient()
-    report, err := c.GetDetailedReport("example.com")
-    if err != nil {
-        log.Fatalf("error: %v", err)
-    }
-    fmt.Printf("Full report:\n%v\n", report)
-```
-
-
 OPTIONS
 
 | Option  | Type | Description |
@@ -73,6 +64,62 @@ OPTIONS
 | Log     | int  | 1: verbose, 2: debug (default: 0) |
 | Retries | int  | Number of retries when not FINISHED (default: 5) |
 | Refresh | bool | Force refresh of the sites (default: false) |
+
+The easiest call is `GetGrade`:
+
+``` go
+    grade, err := c.GetGrade("ssllabs.com")
+    if err != nil {
+        log.Fatalf("error: %v", err)
+    }
+    fmt.Printf("Grade for ssllabs.com: %s\n", grade)
+```
+
+For the `Analyze()` & `GetEndpointData` calls, the raw JSON object will be returned (and presumably handled by `jq`).
+
+``` go
+    // Simplest way
+    c, _ := ssllabs.NewClient()
+    report, err := c.Analyze("example.com")
+    if err != nil {
+        log.Fatalf("error: %v", err)
+    }
+    fmt.Printf("Full report:\n%v\n", report)
+```
+
+Most of the calls can have some options modified from the defaults by passing a second parameter as a map:
+
+``` go
+    opts["fromCache"] = "on"
+
+    grade, err := c.GetGrade("ssllabs.com", opts)
+    if err != nil {
+        log.Fatalf("error: %v", err)
+    }
+    fmt.Printf("Grade for ssllabs.com: %s\n", grade)
+```
+
+You also have the more general (i.e. not tied to a site) calls:
+
+`GetStatusCodes():`
+
+``` go
+    scodes, err := c.GetStatusCodes()
+    if err != nil {
+        log.Fatalf("error: %v", err)
+    }
+    fmt.Printf("Full status codes:\n%v\n", scodes)
+```
+
+`Info():`
+
+``` go
+    info, err := c.Info()
+    if err != nil {
+        log.Fatalf("error: %v", err)
+    }
+    fmt.Printf("SSLLabs Engine version:\n%s\n", info.EngineVersion)
+```
 
 
 ## Using behind a web Proxy
