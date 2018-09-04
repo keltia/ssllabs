@@ -126,39 +126,23 @@ func (c *Client) Info() (*Info, error) {
 
 // GetGrade is the basic call — equal to getEndpointData and extracting just the grade.
 func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, error) {
-	// Default parameters
-	opts := map[string]string{
-		"host":      site,
-		"fromCache": "on",
-	}
-
 	if site == "" {
-		return "", errors.New("empty site")
+		return "Z", errors.New("empty site")
 	}
 
-	// Override default options
-	if myopts != nil {
-		for _, o := range myopts {
-			opts = mergeOptions(opts, o)
+	lr, err := c.Analyze(site, myopts...)
+	if err != nil {
+		return "Z", errors.Wrap(err, "GetGrade")
+	}
+
+	c.debug("lr=%#v", lr)
+	if len(lr.Endpoints) != 0 {
+		if lr.Endpoints[0].StatusMessage != "Ready" {
+			return "Z", errors.New(fmt.Sprintf("error: %s", lr.Endpoints[0].StatusMessage))
 		}
+		return lr.Endpoints[0].Grade, errors.Wrapf(err, "GetGrade - %v", lr)
 	}
-
-	raw, err := c.callAPI("getEndpointData", "", opts)
-	if err != nil {
-		return "", errors.Wrap(err, "GetGrade")
-	}
-
-	var lr LabsEndpoint
-
-	err = json.Unmarshal(raw, &lr)
-	if err != nil {
-		return "", err
-	}
-
-	if lr.StatusMessage != "Ready" {
-		return "Z", errors.New(fmt.Sprintf("error: %s", lr.StatusMessage))
-	}
-	return lr.Grade, errors.Wrapf(err, "GetGrade - %v", raw)
+	return "Z", errors.New("no endpoint")
 }
 
 // GetDetailedReport returns the full report
