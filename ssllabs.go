@@ -126,13 +126,10 @@ func (c *Client) Info() (*LabsInfo, error) {
 
 // GetGrade is the basic call — equal to getEndpointData and extracting just the grade.
 func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, error) {
+	// Default parameters
 	opts := map[string]string{
-		"host":           site,
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "on",
-		"ignoreMismatch": "on",
+		"host":      site,
+		"fromCache": "on",
 	}
 
 	if site == "" {
