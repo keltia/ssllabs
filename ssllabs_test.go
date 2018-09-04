@@ -422,6 +422,27 @@ func TestClient_GetEndpointData2(t *testing.T) {
 	assert.EqualValues(t, &jfta, data)
 }
 
+func TestClient_GetEndpointData3(t *testing.T) {
+	Before(t)
+
+	defer gock.Off()
+
+	site := ""
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	data, err := c.GetEndpointData(site)
+	assert.Error(t, err)
+	assert.Empty(t, data)
+	assert.Equal(t, "empty site", err.Error())
+}
+
 func TestVersion(t *testing.T) {
 	v := Version()
 	assert.Equal(t, MyVersion, v)
