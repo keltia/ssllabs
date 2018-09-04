@@ -16,7 +16,7 @@ Go wrapper for the [SSLLabs](https://ssllabs.com/) API for testing TLS parameter
 
 * Go >= 1.10
 
-`keltia.net/ssllabs` is a Go module (you can use either Go 1.10 with `vgo` or 1.11+).  The API exposed follows the Semantic Versioning scheme to guarantee a consistent API compatibility.
+`github.com/keltia/ssllabs` is a Go module (you can use either Go 1.10 with `vgo` or 1.11+).  The API exposed follows the Semantic Versioning scheme to guarantee a consistent API compatibility.
 
 * `jq` (optional) — you can find it [there](https://stedolan.github.io/jq/)
 
