@@ -241,14 +241,36 @@ func TestClient_Info(t *testing.T) {
 func TestClient_GetGrade(t *testing.T) {
 	Before(t)
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	defer gock.Off()
+
+	site := "lbl.gov"
+
+	opts := map[string]string{
+		"host":           site,
+		"fromCache":      "on",
+	}
+
+	fta, err := ioutil.ReadFile("testdata/lbl.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
+	gock.New(baseURL).
+		Get("/getEndpointData").
+		MatchParams(opts).
+		Reply(200).
+		BodyString(string(fta))
+
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
 
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
 	grade, err := c.GetGrade("lbl.gov")
 	assert.Error(t, err)
-	assert.Empty(t, grade)
+	assert.Equal(t, "Z", grade)
 }
 
 func TestClient_GetGrade2(t *testing.T) {
@@ -260,11 +282,7 @@ func TestClient_GetGrade2(t *testing.T) {
 
 	opts := map[string]string{
 		"host":           site,
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
 		"fromCache":      "on",
-		"ignoreMismatch": "on",
 	}
 
 	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
@@ -300,11 +318,7 @@ func TestClient_GetGrade3(t *testing.T) {
 
 	opts := map[string]string{
 		"host":           site,
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
 		"fromCache":      "on",
-		"ignoreMismatch": "on",
 	}
 
 	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
