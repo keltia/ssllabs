@@ -238,7 +238,22 @@ func TestClient_Info(t *testing.T) {
 	assert.NotEmpty(t, info)
 }
 
-func TestClient_GetGrade(t *testing.T) {
+func TestClient_GetGradeEmpty(t *testing.T) {
+	Before(t)
+
+	defer gock.Off()
+
+	c, err := NewClient()
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	grade, err := c.GetGrade("")
+	assert.Error(t, err)
+	assert.Equal(t, "Z", grade)
+}
+
+func TestClient_GetGradeLbl(t *testing.T) {
 	Before(t)
 
 	defer gock.Off()
