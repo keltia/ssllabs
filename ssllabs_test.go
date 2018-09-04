@@ -341,7 +341,7 @@ func TestClient_GetGrade3(t *testing.T) {
 
 	opts["fromCache"] = "on"
 
-	grade, err := c.GetGrade(site)
+	grade, err := c.GetGrade(site, opts)
 	require.NoError(t, err)
 	assert.NotEmpty(t, grade)
 	assert.Equal(t, "A+", grade)
