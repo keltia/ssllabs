@@ -22,35 +22,35 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestNewClient2(t *testing.T) {
-	conf := Config{BaseURL: testURL}
+	conf := Config{}
 	c, err := NewClient(conf)
 	assert.NoError(t, err)
 	assert.NotNil(t, c)
 	assert.NotEmpty(t, c)
 
-	assert.Equal(t, testURL, c.baseurl)
+	assert.Equal(t, baseURL, c.baseurl)
 }
 
 func TestNewClient3(t *testing.T) {
-	conf := Config{BaseURL: testURL, Log: 1}
+	conf := Config{Log: 1}
 	c, err := NewClient(conf)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, c)
 	assert.NotEmpty(t, c)
 
-	assert.Equal(t, testURL, c.baseurl)
+	assert.Equal(t, baseURL, c.baseurl)
 }
 
 func TestNewClient4(t *testing.T) {
-	conf := Config{BaseURL: testURL, Log: 2}
+	conf := Config{Log: 2}
 	c, err := NewClient(conf)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, c)
 	assert.NotEmpty(t, c)
 
-	assert.Equal(t, testURL, c.baseurl)
+	assert.Equal(t, baseURL, c.baseurl)
 }
 
 func Before(t *testing.T) {
@@ -73,12 +73,12 @@ func TestClient_Analyze(t *testing.T) {
 		"fromCache":      "off",
 		"ignoreMismatch": "on",
 	}
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/analyze").
 		MatchParams(opts).
 		Reply(200)
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -113,13 +113,13 @@ func TestClient_Analyze2(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/analyze").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -159,13 +159,13 @@ func TestClient_Analyze3(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/analyze").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -193,12 +193,12 @@ func TestClient_GetStatusCodes(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, ftr)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/getStatusCodes").
 		Reply(200).
 		BodyString(string(ftr))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -220,12 +220,12 @@ func TestClient_Info(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fti)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/info").
 		Reply(200).
 		BodyString(string(fti))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -271,13 +271,13 @@ func TestClient_GetGrade2(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -311,13 +311,13 @@ func TestClient_GetGrade3(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -350,13 +350,13 @@ func TestClient_GetEndpointData(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -393,13 +393,13 @@ func TestClient_GetEndpointData2(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	gock.New(testURL).
+	gock.New(baseURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -428,7 +428,7 @@ func TestClient_GetEndpointData3(t *testing.T) {
 
 	site := ""
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -450,7 +450,7 @@ func TestVersion(t *testing.T) {
 func TestClient_GetDetailedReport(t *testing.T) {
 	site := ""
 
-	c, err := NewClient(Config{BaseURL: testURL})
+	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
