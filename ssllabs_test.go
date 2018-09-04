@@ -278,7 +278,7 @@ func TestClient_GetGrade2(t *testing.T) {
 
 	defer gock.Off()
 
-	site := "lbl.gov"
+	site := "ssllabs.com"
 
 	opts := map[string]string{
 		"host":           site,
