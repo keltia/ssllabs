@@ -149,7 +149,12 @@ func ParseResults(content []byte) (r []Host, err error) {
 
 func mergeOptions(opts, o map[string]string) map[string]string {
 	for i, opt := range o {
-		opts[i] = opt
+		// "" means delete
+		if opt != "" {
+			opts[i] = opt
+		} else {
+			delete(opts, i)
+		}
 	}
 	return opts
 }

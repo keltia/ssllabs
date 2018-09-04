@@ -113,3 +113,13 @@ func TestMergeOptions3(t *testing.T) {
 	require.NotEmpty(t, o3)
 	assert.EqualValues(t, ot, o3)
 }
+
+func TestMergeOptionsDelete(t *testing.T) {
+	o1 := map[string]string{"baz": "xyzt", "foo": "bar"}
+	o2 := map[string]string{"baz": ""}
+	ot := map[string]string{"foo": "bar"}
+
+	o3 := mergeOptions(o1, o2)
+	require.NotEmpty(t, o3)
+	assert.EqualValues(t, ot, o3)
+}
