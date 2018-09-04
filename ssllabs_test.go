@@ -260,9 +260,14 @@ func TestClient_GetGradeLbl(t *testing.T) {
 
 	site := "lbl.gov"
 
+	// Default parameters
 	opts := map[string]string{
 		"host":           site,
-		"fromCache":      "on",
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
 	}
 
 	fta, err := ioutil.ReadFile("testdata/lbl.json")
@@ -270,7 +275,7 @@ func TestClient_GetGradeLbl(t *testing.T) {
 	require.NotEmpty(t, fta)
 
 	gock.New(baseURL).
-		Get("/getEndpointData").
+		Get("/analyze").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
@@ -288,16 +293,21 @@ func TestClient_GetGradeLbl(t *testing.T) {
 	assert.Equal(t, "Z", grade)
 }
 
-func TestClient_GetGrade2(t *testing.T) {
+func TestClient_GetGradeSSLLabs(t *testing.T) {
 	Before(t)
 
 	defer gock.Off()
 
 	site := "ssllabs.com"
 
+	// Default parameters
 	opts := map[string]string{
 		"host":           site,
-		"fromCache":      "on",
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
 	}
 
 	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
@@ -305,12 +315,13 @@ func TestClient_GetGrade2(t *testing.T) {
 	require.NotEmpty(t, fta)
 
 	gock.New(baseURL).
-		Get("/getEndpointData").
+		Get("/analyze").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
 
 	c, err := NewClient()
+	c.level = 2
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -324,16 +335,21 @@ func TestClient_GetGrade2(t *testing.T) {
 	assert.Equal(t, "A+", grade)
 }
 
-func TestClient_GetGrade3(t *testing.T) {
+func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 	Before(t)
 
 	defer gock.Off()
 
-	site := "lbl.gov"
+	site := "ssllabs.com"
 
+	// Default parameters
 	opts := map[string]string{
 		"host":           site,
-		"fromCache":      "on",
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
 	}
 
 	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
@@ -341,7 +357,7 @@ func TestClient_GetGrade3(t *testing.T) {
 	require.NotEmpty(t, fta)
 
 	gock.New(baseURL).
-		Get("/getEndpointData").
+		Get("/analyze").
 		MatchParams(opts).
 		Reply(200).
 		BodyString(string(fta))
