@@ -426,3 +426,19 @@ func TestVersion(t *testing.T) {
 	v := Version()
 	assert.Equal(t, MyVersion, v)
 }
+
+func TestClient_GetDetailedReport(t *testing.T) {
+	site := ""
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	r, err := c.GetDetailedReport(site)
+	assert.NoError(t, err)
+	assert.Empty(t, r)
+}
