@@ -1,13 +1,12 @@
 package ssllabs
 
 import (
+	"encoding/json"
 	"io/ioutil"
-	"net/http"
-	"net/url"
 	"os"
 	"testing"
 
-	"github.com/goware/httpmock"
+	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -60,116 +59,58 @@ func Before(t *testing.T) {
 	os.Unsetenv("all_proxy")
 }
 
-var (
-	mockService *httpmock.MockHTTPServer
-)
-
-func BeforeAPI(t *testing.T) {
-	var err error
-
-	if mockService == nil {
-		// new mocking server
-		t.Log("starting mock...")
-		mockService = httpmock.NewMockHTTPServer("localhost:10000")
-	}
-
-	require.NotNil(t, mockService)
-
-	// define request->response pairs
-	request1, _ := url.Parse(testURL + "/analyze?host=")
-
-	fte, err := ioutil.ReadFile("testdata/emptyanalyze.json")
-	require.NoError(t, err)
-	require.NotEmpty(t, fte)
-
-	aresp := []httpmock.MockResponse{
-		{
-			Request: http.Request{
-				Method: "GET",
-				URL:    request1,
-			},
-			Response: httpmock.Response{
-				StatusCode: 200,
-				Body:       string(fte),
-			},
-		},
-	}
-
-	mockService.AddResponses(aresp)
-	//t.Logf("respmap=%v", mockService.ResponseMap)
-}
-
 func TestClient_Analyze(t *testing.T) {
+	defer gock.Off()
+
 	Before(t)
-	BeforeAPI(t)
+
+	// Default parameters
+	opts := map[string]string{
+		"host":           "",
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
+	}
+	gock.New(testURL).
+		Get("/analyze").
+		MatchParams(opts).
+		Reply(200)
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
 
-	an, err := c.Analyze("")
-	require.Error(t, err)
-	assert.Empty(t, an)
-}
-
-func TestClient_Analyze2(t *testing.T) {
-	Before(t)
-	BeforeAPI(t)
-
-	c, err := NewClient(Config{BaseURL: "http://localhost:10001"})
-	require.NoError(t, err)
-	require.NotNil(t, c)
-	require.NotEmpty(t, c)
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
 
 	an, err := c.Analyze("")
 	require.Error(t, err)
 	assert.Empty(t, an)
-}
-
-func TestClient_Analyze3(t *testing.T) {
-	Before(t)
-	BeforeAPI(t)
-
-	c, err := NewClient(Config{BaseURL: testURL})
-	require.NoError(t, err)
-	require.NotNil(t, c)
-	require.NotEmpty(t, c)
-
-	opts := map[string]string{"foo": "bar"}
-
-	an, err := c.Analyze("", opts)
-	require.Error(t, err)
-	assert.Empty(t, an)
+	assert.EqualValues(t, "empty site", err.Error())
 }
 
 func TestClient_GetStatusCodes(t *testing.T) {
 	Before(t)
-	BeforeAPI(t)
-
-	request, _ := url.Parse(testURL + "/getStatusCodes")
 
 	ftr, err := ioutil.ReadFile("testdata/statuscodes.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, ftr)
 
-	aresp := httpmock.MockResponse{
-		Request: http.Request{
-			Method: "GET",
-			URL:    request,
-		},
-		Response: httpmock.Response{
-			StatusCode: 200,
-			Body:       string(ftr),
-		},
-	}
-
-	mockService.AddResponse(aresp)
+	gock.New(testURL).
+		Get("/getStatusCodes").
+		Reply(200).
+		BodyString(string(ftr))
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
 
 	sc, err := c.GetStatusCodes()
 	require.NoError(t, err)
@@ -177,30 +118,25 @@ func TestClient_GetStatusCodes(t *testing.T) {
 }
 
 func TestClient_Info(t *testing.T) {
-	Before(t)
-	BeforeAPI(t)
+	defer gock.Off()
 
-	request, _ := url.Parse(testURL + "/info")
 	fti, err := ioutil.ReadFile("testdata/info.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fti)
 
-	aresp := httpmock.MockResponse{
-		Request: http.Request{
-			Method: "GET",
-			URL:    request,
-		},
-		Response: httpmock.Response{
-			StatusCode: 200,
-			Body:       string(fti),
-		},
-	}
-	mockService.AddResponse(aresp)
+	Before(t)
+	gock.New(testURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
 
 	info, err := c.Info()
 	require.NoError(t, err)
@@ -222,49 +158,173 @@ func TestClient_GetGrade(t *testing.T) {
 }
 
 func TestClient_GetGrade2(t *testing.T) {
+	defer gock.Off()
+
+	site := "lbl.gov"
+
+	opts := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
+	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
 	Before(t)
-	BeforeAPI(t)
+	gock.New(testURL).
+		Get("/getEndpointData").
+		MatchParams(opts).
+		Reply(200).
+		BodyString(string(fta))
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
 
-	opts := map[string]string{"foo": "bar"}
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
 
-	grade, err := c.GetGrade("lbl.gov", opts)
-	assert.Error(t, err)
-	assert.Empty(t, grade)
+	grade, err := c.GetGrade(site)
+	require.NoError(t, err)
+	assert.NotEmpty(t, grade)
+	assert.Equal(t, "A+", grade)
+}
+
+func TestClient_GetGrade3(t *testing.T) {
+	defer gock.Off()
+
+	site := "lbl.gov"
+
+	opts := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
+	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
+	Before(t)
+	gock.New(testURL).
+		Get("/getEndpointData").
+		MatchParams(opts).
+		Reply(200).
+		BodyString(string(fta))
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	opts["fromCache"] = "on"
+
+	grade, err := c.GetGrade(site)
+	require.NoError(t, err)
+	assert.NotEmpty(t, grade)
+	assert.Equal(t, "A+", grade)
 }
 
 func TestClient_GetEndpointData(t *testing.T) {
 	Before(t)
-	BeforeAPI(t)
+
+	defer gock.Off()
+
+	site := "ssllabs.com"
+
+	// Default parameters
+	opts := map[string]string{
+		"host":      site,
+		"fromCache": "on",
+	}
+
+	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
+	Before(t)
+	gock.New(testURL).
+		Get("/getEndpointData").
+		MatchParams(opts).
+		Reply(200).
+		BodyString(string(fta))
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
 
-	grade, err := c.GetEndpointData("lbl.gov")
-	assert.Error(t, err)
-	assert.Empty(t, grade)
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	var jfta LabsEndpoint
+
+	err = json.Unmarshal(fta, &jfta)
+	require.NoError(t, err)
+
+	data, err := c.GetEndpointData(site)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, data)
+
+	assert.EqualValues(t, &jfta, data)
 }
 
 func TestClient_GetEndpointData2(t *testing.T) {
 	Before(t)
-	BeforeAPI(t)
+
+	defer gock.Off()
+
+	site := "ssllabs.com"
+
+	// Default parameters
+	opts := map[string]string{
+		"host":      site,
+		"fromCache": "on",
+	}
+
+	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
+	Before(t)
+	gock.New(testURL).
+		Get("/getEndpointData").
+		MatchParams(opts).
+		Reply(200).
+		BodyString(string(fta))
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
 
-	opts := map[string]string{"foo": "bar"}
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
 
-	grade, err := c.GetGrade("lbl.gov", opts)
-	assert.Error(t, err)
-	assert.Empty(t, grade)
+	var jfta LabsEndpoint
+
+	err = json.Unmarshal(fta, &jfta)
+	require.NoError(t, err)
+
+	opts["fromCache"] = "on"
+
+	data, err := c.GetEndpointData(site, opts)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, data)
+
+	assert.EqualValues(t, &jfta, data)
 }
 
 func TestVersion(t *testing.T) {
