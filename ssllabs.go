@@ -144,7 +144,6 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		return "Z", errors.Wrap(err, "GetGrade")
 	}
 
-	c.debug("lr=%#v", lr)
 	if len(lr.Endpoints) != 0 {
 		if lr.Endpoints[0].StatusMessage != "Ready" {
 			return "Z", errors.New(fmt.Sprintf("error: %s", lr.Endpoints[0].StatusMessage))
@@ -196,6 +195,7 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error
 		return &Host{}, errors.Wrapf(err, "Analyze - %s", string(raw))
 	}
 	c.debug("lr=%#v", lr)
+	c.debug("raw=%v", string(raw))
 
 	// Check for errors in returned body
 	if len(lr.Certs) == 0 {
