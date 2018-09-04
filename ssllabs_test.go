@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/goware/httpmock"
+	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -145,31 +146,23 @@ func TestClient_Analyze3(t *testing.T) {
 
 func TestClient_GetStatusCodes(t *testing.T) {
 	Before(t)
-	BeforeAPI(t)
-
-	request, _ := url.Parse(testURL + "/getStatusCodes")
 
 	ftr, err := ioutil.ReadFile("testdata/statuscodes.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, ftr)
 
-	aresp := httpmock.MockResponse{
-		Request: http.Request{
-			Method: "GET",
-			URL:    request,
-		},
-		Response: httpmock.Response{
-			StatusCode: 200,
-			Body:       string(ftr),
-		},
-	}
-
-	mockService.AddResponse(aresp)
+	gock.New(testURL).
+		Get("/getStatusCodes").
+		Reply(200).
+		BodyString(string(ftr))
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
 
 	sc, err := c.GetStatusCodes()
 	require.NoError(t, err)
@@ -177,30 +170,25 @@ func TestClient_GetStatusCodes(t *testing.T) {
 }
 
 func TestClient_Info(t *testing.T) {
-	Before(t)
-	BeforeAPI(t)
+	defer gock.Off()
 
-	request, _ := url.Parse(testURL + "/info")
 	fti, err := ioutil.ReadFile("testdata/info.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fti)
 
-	aresp := httpmock.MockResponse{
-		Request: http.Request{
-			Method: "GET",
-			URL:    request,
-		},
-		Response: httpmock.Response{
-			StatusCode: 200,
-			Body:       string(fti),
-		},
-	}
-	mockService.AddResponse(aresp)
+	Before(t)
+	gock.New(testURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
 
 	info, err := c.Info()
 	require.NoError(t, err)
