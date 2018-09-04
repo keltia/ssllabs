@@ -1,0 +1,31 @@
+{
+  "host": "lbl.gov",
+  "port": 443,
+  "protocol": "http",
+  "isPublic": false,
+  "status": "READY",
+  "startTime": 1536084780927,
+  "testTime": 1536084796075,
+  "engineVersion": "1.32.3",
+  "criteriaVersion": "2009p",
+  "cacheExpiryTime": 1536085396075,
+  "endpoints": [
+    {
+      "ipAddress": "128.3.41.146",
+      "serverName": "lbl.gov",
+      "statusMessage": "Unable to connect to the server",
+      "statusDetails": "TESTING_PROTO_2_0",
+      "statusDetailsMessage": "Testing SSL 2.0",
+      "duration": 15015,
+      "delegation": 1,
+      "details": {
+        "hostStartTime": 1536084780927,
+        "certChains": [],
+        "protocols": [],
+        "prefixDelegation": false,
+        "nonPrefixDelegation": true
+      }
+    }
+  ],
+  "certs": []
+}
