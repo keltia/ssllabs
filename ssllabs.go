@@ -2,6 +2,7 @@ package ssllabs // import "github.com/keltia/ssllabs"
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -157,6 +158,9 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		return "", err
 	}
 
+	if lr.StatusMessage != "Ready" {
+		return "Z", errors.New(fmt.Sprintf("error: %s", lr.StatusMessage))
+	}
 	return lr.Grade, errors.Wrapf(err, "GetGrade - %v", raw)
 }
 
@@ -196,7 +200,17 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*LabsReport,
 	var lr LabsReport
 
 	err = json.Unmarshal(raw, &lr)
-	return &lr, errors.Wrapf(err, "Analyze - %v", raw)
+	if err != nil {
+		return &LabsReport{}, errors.Wrapf(err, "Analyze - %s", string(raw))
+	}
+
+	// Check for errors in returned body
+	if len(lr.Certs) == 0 {
+		if len(lr.Endpoints) != 0 && lr.Endpoints[0].StatusMessage != "Ready" {
+			return &LabsReport{}, errors.New(fmt.Sprintf("error: %s", lr.Endpoints[0].StatusMessage))
+		}
+	}
+	return &lr, errors.Wrapf(err, "Analyze - %s", string(raw))
 }
 
 // GetEndpointData returns the endpoint data, no analyze run if not available
