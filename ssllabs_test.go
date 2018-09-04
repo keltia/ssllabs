@@ -120,7 +120,7 @@ func TestClient_Analyze2(t *testing.T) {
 		Reply(200).
 		BodyString(string(fta))
 
-	c, err := NewClient(Config{BaseURL: testURL, Log: 2})
+	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
@@ -132,6 +132,55 @@ func TestClient_Analyze2(t *testing.T) {
 
 	err = json.Unmarshal(fta, &jfta)
 	require.NoError(t, err)
+
+	an, err := c.Analyze(site)
+	require.NoError(t, err)
+	assert.NotEmpty(t, an)
+	assert.EqualValues(t, &jfta, an)
+}
+
+func TestClient_Analyze3(t *testing.T) {
+
+	defer gock.Off()
+
+	Before(t)
+
+	site := "ssllabs.com"
+
+	// Default parameters
+	opts := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
+	}
+
+	fta, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
+	gock.New(testURL).
+		Get("/analyze").
+		MatchParams(opts).
+		Reply(200).
+		BodyString(string(fta))
+
+	c, err := NewClient(Config{BaseURL: testURL})
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	var jfta LabsReport
+
+	err = json.Unmarshal(fta, &jfta)
+	require.NoError(t, err)
+
+	opts["fromCache"] = "off"
 
 	an, err := c.Analyze(site)
 	require.NoError(t, err)
