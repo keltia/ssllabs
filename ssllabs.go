@@ -173,6 +173,8 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error
 		}
 	}
 
+	c.debug("opts=%v", opts)
+
 	raw, err := c.callAPI("analyze", "", opts)
 	if err != nil {
 		return &Host{}, errors.Wrap(err, "Analyze")
@@ -184,6 +186,7 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error
 	if err != nil {
 		return &Host{}, errors.Wrapf(err, "Analyze - %s", string(raw))
 	}
+	c.debug("lr=%#v", lr)
 
 	// Check for errors in returned body
 	if len(lr.Certs) == 0 {
