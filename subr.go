@@ -94,8 +94,8 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 				return body, nil
 			}
 
-			// We wait for FINISHED state
-			if !strings.Contains(string(body), "READY") {
+			// We wait for Ready state
+			if !strings.Contains(string(body), "Ready") {
 				time.Sleep(2 * time.Second)
 				retry++
 				resp, err = c.client.Do(req)

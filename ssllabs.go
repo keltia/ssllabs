@@ -2,11 +2,11 @@ package ssllabs // import "github.com/keltia/ssllabs"
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
 	"net/http"
 	"time"
 
 	"github.com/keltia/proxy"
+	"github.com/pkg/errors"
 )
 
 /*
@@ -27,7 +27,7 @@ const (
 	DefaultRetry = 5
 
 	// MyVersion is the API version
-	MyVersion = "0.0.1"
+	MyVersion = "0.1.0"
 
 	// MyName is the name used for the configuration
 	MyName = "ssllabs"
@@ -120,7 +120,7 @@ func (c *Client) Info() (*LabsInfo, error) {
 	var li LabsInfo
 
 	err = json.Unmarshal(raw, &li)
-	return &li, errors.Wrapf(err, "Info - %v", raw)
+	return &li, errors.Wrapf(err, "Info - %v", string(raw))
 }
 
 // GetGrade is the basic call — equal to getEndpointData and extracting just the grade.
@@ -132,6 +132,10 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		"maxAge":         "24",
 		"fromCache":      "on",
 		"ignoreMismatch": "on",
+	}
+
+	if site == "" {
+		return "", errors.New("empty site")
 	}
 
 	// Override default options
@@ -146,18 +150,14 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		return "", errors.Wrap(err, "GetGrade")
 	}
 
-	var lr LabsReport
+	var lr LabsEndpoint
 
 	err = json.Unmarshal(raw, &lr)
 	if err != nil {
 		return "", err
 	}
 
-	if len(lr.Endpoints) != 0 {
-		return lr.Endpoints[0].Grade, errors.Wrapf(err, "GetGrade - %v", raw)
-	}
-
-	return "", nil
+	return lr.Grade, errors.Wrapf(err, "GetGrade - %v", raw)
 }
 
 // GetDetailedReport returns the full report
@@ -175,6 +175,10 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*LabsReport,
 		"maxAge":         "24",
 		"fromCache":      "off",
 		"ignoreMismatch": "on",
+	}
+
+	if site == "" {
+		return &LabsReport{}, errors.New("empty site")
 	}
 
 	// Override default options
@@ -201,6 +205,10 @@ func (c *Client) GetEndpointData(site string, myopts ...map[string]string) (*Lab
 	opts := map[string]string{
 		"host":      site,
 		"fromCache": "on",
+	}
+
+	if site == "" {
+		return &LabsEndpoint{}, errors.New("empty site")
 	}
 
 	// Override default options
