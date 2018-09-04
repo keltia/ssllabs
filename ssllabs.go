@@ -2,11 +2,11 @@ package ssllabs // import "github.com/keltia/ssllabs"
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
 	"net/http"
 	"time"
 
 	"github.com/keltia/proxy"
+	"github.com/pkg/errors"
 )
 
 /*
@@ -134,6 +134,10 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		"ignoreMismatch": "on",
 	}
 
+	if site == "" {
+		return "", errors.New("empty site")
+	}
+
 	// Override default options
 	if myopts != nil {
 		for _, o := range myopts {
@@ -177,6 +181,10 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*LabsReport,
 		"ignoreMismatch": "on",
 	}
 
+	if site == "" {
+		return &LabsReport{}, errors.New("empty site")
+	}
+
 	// Override default options
 	if myopts != nil {
 		for _, o := range myopts {
@@ -201,6 +209,10 @@ func (c *Client) GetEndpointData(site string, myopts ...map[string]string) (*Lab
 	opts := map[string]string{
 		"host":      site,
 		"fromCache": "on",
+	}
+
+	if site == "" {
+		return &LabsEndpoint{}, errors.New("empty site")
 	}
 
 	// Override default options
