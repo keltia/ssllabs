@@ -60,9 +60,9 @@ func Before(t *testing.T) {
 }
 
 func TestClient_Analyze(t *testing.T) {
-	defer gock.Off()
-
 	Before(t)
+
+	defer gock.Off()
 
 	// Default parameters
 	opts := map[string]string{
@@ -93,10 +93,9 @@ func TestClient_Analyze(t *testing.T) {
 }
 
 func TestClient_Analyze2(t *testing.T) {
+	Before(t)
 
 	defer gock.Off()
-
-	Before(t)
 
 	site := "ssllabs.com"
 
@@ -140,10 +139,9 @@ func TestClient_Analyze2(t *testing.T) {
 }
 
 func TestClient_Analyze3(t *testing.T) {
+	Before(t)
 
 	defer gock.Off()
-
-	Before(t)
 
 	site := "ssllabs.com"
 
@@ -214,13 +212,14 @@ func TestClient_GetStatusCodes(t *testing.T) {
 }
 
 func TestClient_Info(t *testing.T) {
+	Before(t)
+
 	defer gock.Off()
 
 	fti, err := ioutil.ReadFile("testdata/info.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fti)
 
-	Before(t)
 	gock.New(testURL).
 		Get("/info").
 		Reply(200).
@@ -253,6 +252,8 @@ func TestClient_GetGrade(t *testing.T) {
 }
 
 func TestClient_GetGrade2(t *testing.T) {
+	Before(t)
+
 	defer gock.Off()
 
 	site := "lbl.gov"
@@ -270,7 +271,6 @@ func TestClient_GetGrade2(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	Before(t)
 	gock.New(testURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
@@ -292,6 +292,8 @@ func TestClient_GetGrade2(t *testing.T) {
 }
 
 func TestClient_GetGrade3(t *testing.T) {
+	Before(t)
+
 	defer gock.Off()
 
 	site := "lbl.gov"
@@ -309,7 +311,6 @@ func TestClient_GetGrade3(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	Before(t)
 	gock.New(testURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
@@ -349,7 +350,6 @@ func TestClient_GetEndpointData(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	Before(t)
 	gock.New(testURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
@@ -393,7 +393,6 @@ func TestClient_GetEndpointData2(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
-	Before(t)
 	gock.New(testURL).
 		Get("/getEndpointData").
 		MatchParams(opts).
