@@ -56,7 +56,7 @@ type Host struct {
 	CacheExpiryTime int64    `json:"cacheExpiryTime"`
 	CertHostnames   []string `json:"certHostnames"`
 	Endpoints       []Endpoint
-	Certs           []Cert
+	Certs           []Cert     `json:"certs,omitempty"`
 }
 
 // Endpoint is an Endpoint (IPv4, IPv6)
@@ -75,7 +75,7 @@ type Endpoint struct {
 	Duration             int
 	Eta                  int
 	Delegation           int
-	Details              EndpointDetails
+	Details              EndpointDetails `json:"details,omitempty"`
 }
 
 // EndpointDetails gives the details of a given Endpoint
