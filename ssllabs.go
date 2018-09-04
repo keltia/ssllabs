@@ -130,6 +130,15 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		return "Z", errors.New("empty site")
 	}
 
+	opts := map[string]string{"all": ""}
+
+		// Override default options
+	if myopts != nil {
+		for _, o := range myopts {
+			opts = mergeOptions(opts, o)
+		}
+	}
+
 	lr, err := c.Analyze(site, myopts...)
 	if err != nil {
 		return "Z", errors.Wrap(err, "GetGrade")
