@@ -433,7 +433,7 @@ func TestClient_GetEndpointData(t *testing.T) {
 		"fromCache": "on",
 	}
 
-	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
+	fta, err := ioutil.ReadFile("testdata/ssllabs-endp.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
@@ -476,7 +476,7 @@ func TestClient_GetEndpointData2(t *testing.T) {
 		"fromCache": "on",
 	}
 
-	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
+	fta, err := ioutil.ReadFile("testdata/ssllabs-endp.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
