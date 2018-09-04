@@ -120,7 +120,7 @@ func (c *Client) Info() (*LabsInfo, error) {
 	var li LabsInfo
 
 	err = json.Unmarshal(raw, &li)
-	return &li, errors.Wrapf(err, "Info - %v", raw)
+	return &li, errors.Wrapf(err, "Info - %v", string(raw))
 }
 
 // GetGrade is the basic call — equal to getEndpointData and extracting just the grade.
