@@ -19,7 +19,7 @@ func TestParseResults(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Empty(t, data)
-	assert.IsType(t, ([]LabsReport)(nil), data)
+	assert.IsType(t, ([]Host)(nil), data)
 }
 
 func TestAddQueryParameters(t *testing.T) {

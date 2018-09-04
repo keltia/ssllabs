@@ -127,7 +127,7 @@ func TestClient_Analyze2(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	var jfta LabsReport
+	var jfta Host
 
 	err = json.Unmarshal(fta, &jfta)
 	require.NoError(t, err)
@@ -173,7 +173,7 @@ func TestClient_Analyze3(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	var jfta LabsReport
+	var jfta Host
 
 	err = json.Unmarshal(fta, &jfta)
 	require.NoError(t, err)
@@ -378,7 +378,7 @@ func TestClient_GetEndpointData(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	var jfta LabsEndpoint
+	var jfta Endpoint
 
 	err = json.Unmarshal(fta, &jfta)
 	require.NoError(t, err)
@@ -421,7 +421,7 @@ func TestClient_GetEndpointData2(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	var jfta LabsEndpoint
+	var jfta Endpoint
 
 	err = json.Unmarshal(fta, &jfta)
 	require.NoError(t, err)
