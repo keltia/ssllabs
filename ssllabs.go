@@ -200,7 +200,7 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error
 	// Check for errors in returned body
 	if len(lr.Certs) == 0 {
 		if len(lr.Endpoints) != 0 && lr.Endpoints[0].StatusMessage != "Ready" {
-			return &Host{}, fmt.Errorf("error: %s", lr.Endpoints[0].StatusMessage))
+			return &Host{}, fmt.Errorf("error: %s", lr.Endpoints[0].StatusMessage)
 		}
 	}
 	return &lr, errors.Wrapf(err, "Analyze - %s", string(raw))
