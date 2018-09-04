@@ -303,7 +303,16 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 	// Default parameters
 	opts := map[string]string{
 		"host":           site,
-		"all":            "done",
+		"all":            "",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
+	}
+
+	// We are removing a parameterbbb
+	mopts := map[string]string{
+		"host":           site,
 		"publish":        "off",
 		"maxAge":         "24",
 		"fromCache":      "off",
@@ -316,7 +325,7 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 
 	gock.New(baseURL).
 		Get("/analyze").
-		MatchParams(opts).
+		MatchParams(mopts).
 		Reply(200).
 		BodyString(string(fta))
 
@@ -329,7 +338,7 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	grade, err := c.GetGrade(site)
+	grade, err := c.GetGrade(site, opts)
 	require.NoError(t, err)
 	assert.NotEmpty(t, grade)
 	assert.Equal(t, "A+", grade)
@@ -394,13 +403,23 @@ func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 		"ignoreMismatch": "on",
 	}
 
+	// Default parameters
+	mopts := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
 	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
 
 	gock.New(baseURL).
 		Get("/analyze").
-		MatchParams(opts).
+		MatchParams(mopts).
 		Reply(200).
 		BodyString(string(fta))
 
