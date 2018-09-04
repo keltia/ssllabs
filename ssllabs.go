@@ -150,18 +150,14 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		return "", errors.Wrap(err, "GetGrade")
 	}
 
-	var lr LabsReport
+	var lr LabsEndpoint
 
 	err = json.Unmarshal(raw, &lr)
 	if err != nil {
 		return "", err
 	}
 
-	if len(lr.Endpoints) != 0 {
-		return lr.Endpoints[0].Grade, errors.Wrapf(err, "GetGrade - %v", raw)
-	}
-
-	return "", nil
+	return lr.Grade, errors.Wrapf(err, "GetGrade - %v", raw)
 }
 
 // GetDetailedReport returns the full report
