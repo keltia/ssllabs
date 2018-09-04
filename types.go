@@ -287,6 +287,7 @@ type HpkpPolicy struct {
 	Directives        []HpkpDirective
 }
 
+// SPkpPolicy descries the Static PkpPolicy
 type SPkpPolicy struct {
 	Status               string   `json:"status"`
 	Error                string   `json:"error"`
@@ -386,7 +387,7 @@ type HpkpDirective struct {
 	Value string
 }
 
-// LabsReports is a shortcut to all reports
+// Hosts is a shortcut to all Host
 type Hosts []Host
 
 // LabsResults are all the result of a run w/ 1 or more sites
