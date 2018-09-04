@@ -145,7 +145,6 @@ func TestClient_Info(t *testing.T) {
 
 func TestClient_GetGrade(t *testing.T) {
 	Before(t)
-	BeforeAPI(t)
 
 	c, err := NewClient(Config{BaseURL: testURL})
 	require.NoError(t, err)
