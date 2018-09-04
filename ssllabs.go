@@ -110,15 +110,15 @@ func NewClient(cnf ...Config) (*Client, error) {
 }
 
 // Info implements the Info() API call
-func (c *Client) Info() (*LabsInfo, error) {
+func (c *Client) Info() (*Info, error) {
 	// No parameter
 	opts := map[string]string{}
 	raw, err := c.callAPI("info", "", opts)
 	if err != nil {
-		return &LabsInfo{}, errors.Wrap(err, "Info")
+		return &Info{}, errors.Wrap(err, "Info")
 	}
 
-	var li LabsInfo
+	var li Info
 
 	err = json.Unmarshal(raw, &li)
 	return &li, errors.Wrapf(err, "Info - %v", string(raw))
@@ -162,12 +162,12 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 }
 
 // GetDetailedReport returns the full report
-func (c *Client) GetDetailedReport(site string) (LabsReport, error) {
-	return LabsReport{}, nil
+func (c *Client) GetDetailedReport(site string) (Host, error) {
+	return Host{}, nil
 }
 
 // Analyze submit the given host for checking
-func (c *Client) Analyze(site string, myopts ...map[string]string) (*LabsReport, error) {
+func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error) {
 	// Default parameters
 	opts := map[string]string{
 		"host":           site,
@@ -179,7 +179,7 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*LabsReport,
 	}
 
 	if site == "" {
-		return &LabsReport{}, errors.New("empty site")
+		return &Host{}, errors.New("empty site")
 	}
 
 	// Override default options
@@ -191,27 +191,27 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*LabsReport,
 
 	raw, err := c.callAPI("analyze", "", opts)
 	if err != nil {
-		return &LabsReport{}, errors.Wrap(err, "Analyze")
+		return &Host{}, errors.Wrap(err, "Analyze")
 	}
 
-	var lr LabsReport
+	var lr Host
 
 	err = json.Unmarshal(raw, &lr)
 	if err != nil {
-		return &LabsReport{}, errors.Wrapf(err, "Analyze - %s", string(raw))
+		return &Host{}, errors.Wrapf(err, "Analyze - %s", string(raw))
 	}
 
 	// Check for errors in returned body
 	if len(lr.Certs) == 0 {
 		if len(lr.Endpoints) != 0 && lr.Endpoints[0].StatusMessage != "Ready" {
-			return &LabsReport{}, errors.New(fmt.Sprintf("error: %s", lr.Endpoints[0].StatusMessage))
+			return &Host{}, errors.New(fmt.Sprintf("error: %s", lr.Endpoints[0].StatusMessage))
 		}
 	}
 	return &lr, errors.Wrapf(err, "Analyze - %s", string(raw))
 }
 
 // GetEndpointData returns the endpoint data, no analyze run if not available
-func (c *Client) GetEndpointData(site string, myopts ...map[string]string) (*LabsEndpoint, error) {
+func (c *Client) GetEndpointData(site string, myopts ...map[string]string) (*Endpoint, error) {
 	// Default parameters
 	opts := map[string]string{
 		"host":      site,
@@ -219,7 +219,7 @@ func (c *Client) GetEndpointData(site string, myopts ...map[string]string) (*Lab
 	}
 
 	if site == "" {
-		return &LabsEndpoint{}, errors.New("empty site")
+		return &Endpoint{}, errors.New("empty site")
 	}
 
 	// Override default options
@@ -231,10 +231,10 @@ func (c *Client) GetEndpointData(site string, myopts ...map[string]string) (*Lab
 
 	raw, err := c.callAPI("getEndpointData", "", opts)
 	if err != nil {
-		return &LabsEndpoint{}, errors.Wrap(err, "GetEndpointData")
+		return &Endpoint{}, errors.Wrap(err, "GetEndpointData")
 	}
 
-	var le LabsEndpoint
+	var le Endpoint
 
 	err = json.Unmarshal(raw, &le)
 	return &le, errors.Wrapf(err, "GetEndpointData - %v", raw)

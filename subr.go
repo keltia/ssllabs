@@ -129,7 +129,7 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 }
 
 // Display for one report
-func (rep *LabsReport) String() string {
+func (rep *Host) String() string {
 	host := rep.Host
 	if len(rep.Endpoints) != 0 {
 		grade := rep.Endpoints[0].Grade
@@ -140,8 +140,8 @@ func (rep *LabsReport) String() string {
 }
 
 // ParseResults unmarshals the json payload
-func ParseResults(content []byte) (r []LabsReport, err error) {
-	var data []LabsReport
+func ParseResults(content []byte) (r []Host, err error) {
+	var data []Host
 
 	err = json.Unmarshal(content, &data)
 	return data, errors.Wrap(err, "unmarshal")
