@@ -182,7 +182,7 @@ func TestClient_Analyze3(t *testing.T) {
 
 	opts["fromCache"] = "off"
 
-	an, err := c.Analyze(site)
+	an, err := c.Analyze(site, opts)
 	require.NoError(t, err)
 	assert.NotEmpty(t, an)
 	assert.EqualValues(t, &jfta, an)
