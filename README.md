@@ -18,11 +18,25 @@ Go wrapper for the [SSLLabs](https://ssllabs.com/) API for testing TLS parameter
 
 `keltia.net/ssllabs` is a Go module (you can use either Go 1.10 with `vgo` or 1.11+).  The API exposed follows the Semantic Versioning scheme to guarantee a consistent API compatibility.
 
+* `jq` (optional) — you can find it [there](https://stedolan.github.io/jq/)
+
+## Installation
+
+You need to install this module if you are using Go 1.10.x or earlier.
+
+    go get github.com/keltia/proxy
+
+With Go 1.11+ and its modules support, it should work out of the box with
+
+    go get github.com/keltia/ssllabs/cmd/...
+
+if you have the `GO111MODULE` environment variable set on `on`.
+
 ## USAGE
 
 There is a small example program included in `cmd/ssllabs` to either show the grade of a given site or JSON dump of the detailed report.
 
-You can use [`jq`](https://stedolan.github.io/jq/) to display the output of `ssllabs -d <site>` in a colorised way:
+You can use `jq` to display the output of `ssllabs -d <site>` in a colorised way:
 
     ssllabs -d www.ssllabs.com | jq .
 
