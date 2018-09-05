@@ -28,7 +28,7 @@ const (
 	DefaultRetry = 5
 
 	// MyVersion is the API version
-	MyVersion = "0.1.0"
+	MyVersion = "0.2.0"
 
 	// MyName is the name used for the configuration
 	MyName = "ssllabs"
@@ -132,7 +132,7 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 
 	opts := map[string]string{"all": ""}
 
-		// Override default options
+	// Override default options
 	if myopts != nil {
 		for _, o := range myopts {
 			opts = mergeOptions(opts, o)
