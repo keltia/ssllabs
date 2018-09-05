@@ -56,7 +56,7 @@ type Host struct {
 	CacheExpiryTime int64    `json:"cacheExpiryTime"`
 	CertHostnames   []string `json:"certHostnames"`
 	Endpoints       []Endpoint
-	Certs           []Cert     `json:"certs,omitempty"`
+	Certs           []Cert `json:"certs,omitempty"`
 }
 
 // Endpoint is an Endpoint (IPv4, IPv6)
@@ -83,7 +83,7 @@ type EndpointDetails struct {
 	HostStartTime                  int64              `json:"hostStartTime"`
 	CertChains                     []CertificateChain `json:"certChains"`
 	Protocols                      []Protocol
-	Suites                         []Suite
+	Suites                         []ProtocolSuites
 	NoSniSuites                    ProtocolSuites `json:"noSniSuites"`
 	NamedGroups                    NamedGroups    `json:"namedGroups"`
 	ServerSignature                string         `json:"serverSignature"`
