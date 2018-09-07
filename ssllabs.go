@@ -139,7 +139,7 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		}
 	}
 
-	lr, err := c.Analyze(site, myopts...)
+	lr, err := c.Analyze(site, false, myopts...)
 	if err != nil {
 		return "Z", errors.Wrap(err, "GetGrade")
 	}
@@ -159,7 +159,13 @@ func (c *Client) GetDetailedReport(site string) (Host, error) {
 }
 
 // Analyze submit the given host for checking
-func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error) {
+func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (*Host, error) {
+	var (
+		raw []byte
+		err error
+		lr  Host
+	)
+
 	// Default parameters
 	opts := map[string]string{
 		"host":           site,
