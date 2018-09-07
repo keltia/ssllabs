@@ -140,7 +140,54 @@ func TestClient_AnalyzeForceFull(t *testing.T) {
 	assert.EqualValues(t, &jfta, an)
 }
 
-func TestClient_Analyze3(t *testing.T) {
+// From cache, full restults, no options
+func TestClient_AnalyzeCacheFull(t *testing.T) {
+	Before(t)
+
+	defer gock.Off()
+
+	site := "ssllabs.com"
+
+	opts2 := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
+	ftc, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, ftc)
+
+	gock.New(baseURL).
+		Get("/analyze").
+		MatchParams(opts2).
+		Reply(200).
+		BodyString(string(ftc))
+
+	c, err := NewClient()
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	var jfta Host
+
+	err = json.Unmarshal(ftc, &jfta)
+	require.NoError(t, err)
+
+	an, err := c.Analyze(site, false, opts2)
+	require.NoError(t, err)
+	assert.NotEmpty(t, an)
+	assert.EqualValues(t, &jfta, an)
+}
+
+// From cache, full restults, with options
+func TestClient_AnalyzeCacheFullOpts(t *testing.T) {
 	Before(t)
 
 	defer gock.Off()
