@@ -106,22 +106,6 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 			} else {
 				return body, nil
 			}
-		} else if resp.StatusCode == http.StatusFound {
-			str := resp.Header["Location"][0]
-
-			c.debug("Got 302 to %s", str)
-
-			req := c.prepareRequest(what, "GET", opts)
-			if err != nil {
-				return []byte{}, errors.Wrap(err, "redirect")
-			}
-
-			resp, err = c.client.Do(req)
-			retry++
-			if err != nil {
-				return []byte{}, errors.Wrap(err, "client.Do failed")
-			}
-			c.debug("resp was %v", resp)
 		} else {
 			return body, errors.Wrapf(err, "status: %v body: %q", resp.Status, body)
 		}
