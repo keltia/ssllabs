@@ -73,7 +73,8 @@ func TestClient_AnalyzeEmpty(t *testing.T) {
 	assert.EqualValues(t, "empty site", err.Error())
 }
 
-func TestClient_Analyze2(t *testing.T) {
+// Start fresh, full restults, no options
+func TestClient_AnalyzeForceFull(t *testing.T) {
 	Before(t)
 
 	defer gock.Off()
@@ -81,7 +82,17 @@ func TestClient_Analyze2(t *testing.T) {
 	site := "ssllabs.com"
 
 	// Default parameters
-	opts := map[string]string{
+	opts1 := map[string]string{
+		"host":           site,
+		"startNew":       "on",
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
+	}
+
+	opts2 := map[string]string{
 		"host":           site,
 		"all":            "done",
 		"publish":        "off",
@@ -90,15 +101,25 @@ func TestClient_Analyze2(t *testing.T) {
 		"ignoreMismatch": "on",
 	}
 
-	fta, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	ftp, err := ioutil.ReadFile("testdata/ssllabs-partial.json")
 	require.NoError(t, err)
-	require.NotEmpty(t, fta)
+	require.NotEmpty(t, ftp)
+
+	ftc, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, ftc)
 
 	gock.New(baseURL).
 		Get("/analyze").
-		MatchParams(opts).
+		MatchParams(opts1).
 		Reply(200).
-		BodyString(string(fta))
+		BodyString(string(ftp))
+
+	gock.New(baseURL).
+		Get("/analyze").
+		MatchParams(opts2).
+		Reply(200).
+		BodyString(string(ftc))
 
 	c, err := NewClient()
 	require.NoError(t, err)
@@ -110,10 +131,10 @@ func TestClient_Analyze2(t *testing.T) {
 
 	var jfta Host
 
-	err = json.Unmarshal(fta, &jfta)
+	err = json.Unmarshal(ftc, &jfta)
 	require.NoError(t, err)
 
-	an, err := c.Analyze(site, false)
+	an, err := c.Analyze(site, true)
 	require.NoError(t, err)
 	assert.NotEmpty(t, an)
 	assert.EqualValues(t, &jfta, an)
@@ -319,7 +340,7 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	grade, err := c.GetGrade(site, opts)
+	grade, err := c.GetGrade(site)
 	require.NoError(t, err)
 	assert.NotEmpty(t, grade)
 	assert.Equal(t, "A+", grade)
