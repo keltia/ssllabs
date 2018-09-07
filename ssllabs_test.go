@@ -349,17 +349,7 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 
 	site := "ssllabs.com"
 
-	// Default parameters
-	opts := map[string]string{
-		"host":           site,
-		"all":            "",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-
-	// We are removing a parameterbbb
+	// We are removing a parameter
 	mopts := map[string]string{
 		"host":           site,
 		"publish":        "off",
@@ -399,16 +389,6 @@ func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 	defer gock.Off()
 
 	site := "ssllabs.com"
-
-	// Default parameters
-	opts := map[string]string{
-		"host":           site,
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
 
 	// Default parameters
 	mopts := map[string]string{
