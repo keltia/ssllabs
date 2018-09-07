@@ -200,6 +200,8 @@ func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (
 
 		// Have a look at the body
 		c.debug("raw=%v", string(raw))
+	} else {
+		opts["fromCache"] = "on"
 	}
 
 	retry := 0
