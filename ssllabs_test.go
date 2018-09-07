@@ -59,34 +59,15 @@ func Before(t *testing.T) {
 	os.Unsetenv("all_proxy")
 }
 
-func TestClient_Analyze(t *testing.T) {
+func TestClient_AnalyzeEmpty(t *testing.T) {
 	Before(t)
-
-	defer gock.Off()
-
-	// Default parameters
-	opts := map[string]string{
-		"host":           "",
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-	gock.New(baseURL).
-		Get("/analyze").
-		MatchParams(opts).
-		Reply(200)
 
 	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
 
-	gock.InterceptClient(c.client)
-	defer gock.RestoreClient(c.client)
-
-	an, err := c.Analyze("")
+	an, err := c.Analyze("", false)
 	require.Error(t, err)
 	assert.Empty(t, an)
 	assert.EqualValues(t, "empty site", err.Error())
