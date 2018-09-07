@@ -9,11 +9,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net/url"
-	"strings"
-	"time"
-
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 )
@@ -55,13 +52,13 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 	retry := 0
 
 	c.debug("callAPI")
-	req := c.prepareRequest("GET", what, opts)
-	if req == nil {
-		return []byte{}, errors.New("req is nil")
-	}
-
 	c.debug("clt=%#v", c.client)
 	c.debug("opts=%v", opts)
+
+	req := c.prepareRequest("GET", what, opts)
+	if req == nil {
+		return []byte{}, fmt.Errorf("nil req")
+	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {
@@ -72,44 +69,19 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 
 	c.debug("resp=%#v", resp)
 
-	for {
-		if retry == c.retries {
-			return nil, errors.New("retries")
-		}
+	if resp.StatusCode == http.StatusOK {
 
+		c.debug("status OK")
 		c.debug("read body")
+
 		body, err = ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return []byte{}, errors.Wrapf(err, "body read, retry=%d", retry)
 		}
-
-		c.debug("body=%v", string(body))
-
-		if resp.StatusCode == http.StatusOK {
-
-			c.debug("status OK")
-
-			// Early exit
-			if what != "analyze" {
-				return body, nil
-			}
-
-			// We wait for Ready state
-			if !strings.Contains(string(body), "Ready") {
-				time.Sleep(2 * time.Second)
-				retry++
-				resp, err = c.client.Do(req)
-				if err != nil {
-					return body, errors.Wrapf(err, "pending, retry=%d", retry)
-				}
-				c.debug("resp was %v", resp)
-			} else {
-				return body, nil
-			}
-		} else {
-			return body, errors.Wrapf(err, "status: %v body: %q", resp.Status, body)
-		}
+		return body, errors.Wrapf(err, "status: %v body: %q", resp.Status, body)
 	}
+	c.debug("NOK")
+	return []byte{}, errors.Wrapf(err, "status: %d", resp.StatusCode)
 }
 
 // Display for one report
