@@ -8,6 +8,7 @@ This is just a very short example.
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -48,7 +49,7 @@ func init() {
 	}
 
 	if fInfo {
-		fmt.Printf("SSLLabs server info:")
+		fmt.Fprintf(os.Stderr, "SSLLabs server info:\n")
 		return
 	}
 
@@ -83,7 +84,8 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: %v", err)
 			os.Exit(1)
 		}
-		fmt.Printf("SSLLabs Info\n%#v", info)
+		jinfo, err := json.Marshal(info)
+		fmt.Fprintf(os.Stderr, "SSLLabs Info\n%#s", string(jinfo))
 		os.Exit(0)
 	}
 
@@ -97,7 +99,7 @@ func main() {
 		// Just dump the json
 		fmt.Printf("%v\n", report)
 	} else {
-		fmt.Printf("%s Wrapper: %s API version %s\n\n",
+		fmt.Fprintf(os.Stderr, "%s Wrapper: %s API version %s\n\n",
 			MyName, MyVersion, ssllabs.Version())
 		grade, err := c.GetGrade(site)
 		if err != nil {
