@@ -28,7 +28,7 @@ const (
 	DefaultRetry = 5
 
 	// MyVersion is the API version
-	MyVersion = "0.3.0"
+	MyVersion = "0.9.0"
 
 	// MyName is the name used for the configuration
 	MyName = "ssllabs"
@@ -139,7 +139,7 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		}
 	}
 
-	lr, err := c.Analyze(site, myopts...)
+	lr, err := c.Analyze(site, false, myopts...)
 	if err != nil {
 		return "Z", errors.Wrap(err, "GetGrade")
 	}
@@ -159,11 +159,16 @@ func (c *Client) GetDetailedReport(site string) (Host, error) {
 }
 
 // Analyze submit the given host for checking
-func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error) {
+func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (*Host, error) {
+	var (
+		raw []byte
+		err error
+		lr  Host
+	)
+
 	// Default parameters
 	opts := map[string]string{
 		"host":           site,
-		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
 		"fromCache":      "off",
@@ -183,27 +188,52 @@ func (c *Client) Analyze(site string, myopts ...map[string]string) (*Host, error
 
 	c.debug("opts=%v", opts)
 
-	raw, err := c.callAPI("analyze", "", opts)
-	if err != nil {
-		return &Host{}, errors.Wrap(err, "Analyze")
-	}
+	// Trigger the analyze
+	if force {
+		opts["startNew"] = "on"
+		opts["all"] = "done"
 
-	var lr Host
-
-	err = json.Unmarshal(raw, &lr)
-	if err != nil {
-		return &Host{}, errors.Wrapf(err, "Analyze - %s", string(raw))
-	}
-	c.debug("lr=%#v", lr)
-	c.debug("raw=%v", string(raw))
-
-	// Check for errors in returned body
-	if len(lr.Certs) == 0 {
-		if len(lr.Endpoints) != 0 && lr.Endpoints[0].StatusMessage != "Ready" {
-			return &Host{}, fmt.Errorf("error: %s", lr.Endpoints[0].StatusMessage)
+		raw, err := c.callAPI("analyze", "", opts)
+		if err != nil {
+			return &Host{}, errors.Wrap(err, "analyze/trigger")
 		}
+
+		// Have a look at the body
+		c.debug("raw=%v", string(raw))
+	} else {
+		opts["fromCache"] = "on"
 	}
-	return &lr, errors.Wrapf(err, "Analyze - %s", string(raw))
+
+	retry := 0
+	for {
+		if retry >= c.retries {
+			return &Host{}, fmt.Errorf("retries exceeded raw=%v", string(raw))
+		}
+
+		raw, err = c.callAPI("analyze", "", opts)
+		if err != nil {
+			return &Host{}, errors.Wrap(err, "analyze/loop")
+		}
+
+		err = json.Unmarshal(raw, &lr)
+		if err != nil {
+			return &Host{}, errors.Wrapf(err, "analyze/unmarshal: %s", string(raw))
+		}
+
+		c.debug("lr=%#v", lr)
+		c.debug("raw=%v", string(raw))
+
+		// End of analysis
+		if lr.Status == "READY" || lr.Status == "ERROR " {
+			c.debug("out-of-loop")
+			break
+		}
+
+		c.debug("loop")
+		time.Sleep(2 * time.Second)
+		retry++
+	}
+	return &lr, errors.Wrapf(err, "analyze/end: %s", string(raw))
 }
 
 // GetEndpointData returns the endpoint data, no analyze run if not available

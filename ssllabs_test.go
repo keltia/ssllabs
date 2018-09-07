@@ -59,40 +59,22 @@ func Before(t *testing.T) {
 	os.Unsetenv("all_proxy")
 }
 
-func TestClient_Analyze(t *testing.T) {
+func TestClient_AnalyzeEmpty(t *testing.T) {
 	Before(t)
-
-	defer gock.Off()
-
-	// Default parameters
-	opts := map[string]string{
-		"host":           "",
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-	gock.New(baseURL).
-		Get("/analyze").
-		MatchParams(opts).
-		Reply(200)
 
 	c, err := NewClient()
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
 
-	gock.InterceptClient(c.client)
-	defer gock.RestoreClient(c.client)
-
-	an, err := c.Analyze("")
+	an, err := c.Analyze("", false)
 	require.Error(t, err)
 	assert.Empty(t, an)
 	assert.EqualValues(t, "empty site", err.Error())
 }
 
-func TestClient_Analyze2(t *testing.T) {
+// Start fresh, full restults, no options
+func TestClient_AnalyzeForceFull(t *testing.T) {
 	Before(t)
 
 	defer gock.Off()
@@ -100,7 +82,17 @@ func TestClient_Analyze2(t *testing.T) {
 	site := "ssllabs.com"
 
 	// Default parameters
-	opts := map[string]string{
+	opts1 := map[string]string{
+		"host":           site,
+		"startNew":       "on",
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "off",
+		"ignoreMismatch": "on",
+	}
+
+	opts2 := map[string]string{
 		"host":           site,
 		"all":            "done",
 		"publish":        "off",
@@ -109,15 +101,25 @@ func TestClient_Analyze2(t *testing.T) {
 		"ignoreMismatch": "on",
 	}
 
-	fta, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	ftp, err := ioutil.ReadFile("testdata/ssllabs-partial.json")
 	require.NoError(t, err)
-	require.NotEmpty(t, fta)
+	require.NotEmpty(t, ftp)
+
+	ftc, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, ftc)
 
 	gock.New(baseURL).
 		Get("/analyze").
-		MatchParams(opts).
+		MatchParams(opts1).
 		Reply(200).
-		BodyString(string(fta))
+		BodyString(string(ftp))
+
+	gock.New(baseURL).
+		Get("/analyze").
+		MatchParams(opts2).
+		Reply(200).
+		BodyString(string(ftc))
 
 	c, err := NewClient()
 	require.NoError(t, err)
@@ -129,16 +131,63 @@ func TestClient_Analyze2(t *testing.T) {
 
 	var jfta Host
 
-	err = json.Unmarshal(fta, &jfta)
+	err = json.Unmarshal(ftc, &jfta)
 	require.NoError(t, err)
 
-	an, err := c.Analyze(site)
+	an, err := c.Analyze(site, true)
 	require.NoError(t, err)
 	assert.NotEmpty(t, an)
 	assert.EqualValues(t, &jfta, an)
 }
 
-func TestClient_Analyze3(t *testing.T) {
+// From cache, full restults, no options
+func TestClient_AnalyzeCacheFull(t *testing.T) {
+	Before(t)
+
+	defer gock.Off()
+
+	site := "ssllabs.com"
+
+	opts2 := map[string]string{
+		"host":           site,
+		"all":            "done",
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
+	ftc, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, ftc)
+
+	gock.New(baseURL).
+		Get("/analyze").
+		MatchParams(opts2).
+		Reply(200).
+		BodyString(string(ftc))
+
+	c, err := NewClient()
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	var jfta Host
+
+	err = json.Unmarshal(ftc, &jfta)
+	require.NoError(t, err)
+
+	an, err := c.Analyze(site, false, opts2)
+	require.NoError(t, err)
+	assert.NotEmpty(t, an)
+	assert.EqualValues(t, &jfta, an)
+}
+
+// From cache, full restults, with options
+func TestClient_AnalyzeCacheFullOpts(t *testing.T) {
 	Before(t)
 
 	defer gock.Off()
@@ -151,7 +200,7 @@ func TestClient_Analyze3(t *testing.T) {
 		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
-		"fromCache":      "off",
+		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
 
@@ -180,7 +229,7 @@ func TestClient_Analyze3(t *testing.T) {
 
 	opts["fromCache"] = "off"
 
-	an, err := c.Analyze(site, opts)
+	an, err := c.Analyze(site, false, opts)
 	require.NoError(t, err)
 	assert.NotEmpty(t, an)
 	assert.EqualValues(t, &jfta, an)
@@ -300,113 +349,9 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 
 	site := "ssllabs.com"
 
-	// Default parameters
-	opts := map[string]string{
-		"host":           site,
-		"all":            "",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-
-	// We are removing a parameterbbb
+	// We are removing a parameter
 	mopts := map[string]string{
 		"host":           site,
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-
-	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
-	require.NoError(t, err)
-	require.NotEmpty(t, fta)
-
-	gock.New(baseURL).
-		Get("/analyze").
-		MatchParams(mopts).
-		Reply(200).
-		BodyString(string(fta))
-
-	c, err := NewClient()
-	c.level = 2
-	require.NoError(t, err)
-	require.NotNil(t, c)
-	require.NotEmpty(t, c)
-
-	gock.InterceptClient(c.client)
-	defer gock.RestoreClient(c.client)
-
-	grade, err := c.GetGrade(site, opts)
-	require.NoError(t, err)
-	assert.NotEmpty(t, grade)
-	assert.Equal(t, "A+", grade)
-}
-
-func TestClient_GetGradeSSLLabsFull(t *testing.T) {
-	Before(t)
-
-	defer gock.Off()
-
-	site := "ssllabs.com"
-
-	// Default parameters
-	opts := map[string]string{
-		"host":           site,
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-
-	fta, err := ioutil.ReadFile("testdata/ssllabs-full.json")
-	require.NoError(t, err)
-	require.NotEmpty(t, fta)
-
-	gock.New(baseURL).
-		Get("/analyze").
-		MatchParams(opts).
-		Reply(200).
-		BodyString(string(fta))
-
-	c, err := NewClient()
-	c.level = 2
-	require.NoError(t, err)
-	require.NotNil(t, c)
-	require.NotEmpty(t, c)
-
-	gock.InterceptClient(c.client)
-	defer gock.RestoreClient(c.client)
-
-	grade, err := c.GetGrade(site)
-	require.NoError(t, err)
-	assert.NotEmpty(t, grade)
-	assert.Equal(t, "A+", grade)
-}
-
-func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
-	Before(t)
-
-	defer gock.Off()
-
-	site := "ssllabs.com"
-
-	// Default parameters
-	opts := map[string]string{
-		"host":           site,
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-
-	// Default parameters
-	mopts := map[string]string{
-		"host":           site,
-		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
 		"fromCache":      "on",
@@ -431,7 +376,47 @@ func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	opts["fromCache"] = "on"
+	grade, err := c.GetGrade(site)
+	require.NoError(t, err)
+	assert.NotEmpty(t, grade)
+	assert.Equal(t, "A+", grade)
+}
+
+func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
+	Before(t)
+
+	defer gock.Off()
+
+	site := "ssllabs.com"
+
+	// Default parameters
+	mopts := map[string]string{
+		"host":           site,
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+	}
+
+	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
+	gock.New(baseURL).
+		Get("/analyze").
+		MatchParams(mopts).
+		Reply(200).
+		BodyString(string(fta))
+
+	c, err := NewClient()
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	opts := map[string]string{"fromCache": "on"}
 
 	grade, err := c.GetGrade(site, opts)
 	require.NoError(t, err)
