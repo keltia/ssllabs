@@ -132,7 +132,7 @@ func TestClient_Analyze2(t *testing.T) {
 	err = json.Unmarshal(fta, &jfta)
 	require.NoError(t, err)
 
-	an, err := c.Analyze(site)
+	an, err := c.Analyze(site, false)
 	require.NoError(t, err)
 	assert.NotEmpty(t, an)
 	assert.EqualValues(t, &jfta, an)
@@ -180,7 +180,7 @@ func TestClient_Analyze3(t *testing.T) {
 
 	opts["fromCache"] = "off"
 
-	an, err := c.Analyze(site, opts)
+	an, err := c.Analyze(site, false, opts)
 	require.NoError(t, err)
 	assert.NotEmpty(t, an)
 	assert.EqualValues(t, &jfta, an)
