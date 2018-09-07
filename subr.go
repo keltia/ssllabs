@@ -84,17 +84,6 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 	return []byte{}, errors.Wrapf(err, "status: %d", resp.StatusCode)
 }
 
-// Display for one report
-func (rep *Host) String() string {
-	host := rep.Host
-	if len(rep.Endpoints) != 0 {
-		grade := rep.Endpoints[0].Grade
-		//details := rep.Endpoints[0].Details
-		return fmt.Sprintf("Looking at %s — grade %s", host, grade)
-	}
-	return ""
-}
-
 // ParseResults unmarshals the json payload
 func ParseResults(content []byte) (r []Host, err error) {
 	var data []Host
