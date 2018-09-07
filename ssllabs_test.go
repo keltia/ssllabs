@@ -393,48 +393,6 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 	assert.Equal(t, "A+", grade)
 }
 
-func TestClient_GetGradeSSLLabsFull(t *testing.T) {
-	Before(t)
-
-	defer gock.Off()
-
-	site := "ssllabs.com"
-
-	// Default parameters
-	opts := map[string]string{
-		"host":           site,
-		"all":            "done",
-		"publish":        "off",
-		"maxAge":         "24",
-		"fromCache":      "off",
-		"ignoreMismatch": "on",
-	}
-
-	fta, err := ioutil.ReadFile("testdata/ssllabs-full.json")
-	require.NoError(t, err)
-	require.NotEmpty(t, fta)
-
-	gock.New(baseURL).
-		Get("/analyze").
-		MatchParams(opts).
-		Reply(200).
-		BodyString(string(fta))
-
-	c, err := NewClient()
-	c.level = 2
-	require.NoError(t, err)
-	require.NotNil(t, c)
-	require.NotEmpty(t, c)
-
-	gock.InterceptClient(c.client)
-	defer gock.RestoreClient(c.client)
-
-	grade, err := c.GetGrade(site)
-	require.NoError(t, err)
-	assert.NotEmpty(t, grade)
-	assert.Equal(t, "A+", grade)
-}
-
 func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 	Before(t)
 
