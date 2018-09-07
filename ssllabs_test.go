@@ -200,7 +200,7 @@ func TestClient_AnalyzeCacheFullOpts(t *testing.T) {
 		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
-		"fromCache":      "off",
+		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
 
@@ -354,7 +354,7 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 		"host":           site,
 		"publish":        "off",
 		"maxAge":         "24",
-		"fromCache":      "off",
+		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
 
@@ -393,7 +393,6 @@ func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 	// Default parameters
 	mopts := map[string]string{
 		"host":           site,
-		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
 		"fromCache":      "on",
