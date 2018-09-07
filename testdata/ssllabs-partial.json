@@ -1,0 +1,228 @@
+{
+  "host": "ssllabs.com",
+  "port": 443,
+  "protocol": "http",
+  "isPublic": true,
+  "status": "PENDING",
+  "startTime": 1536094265228,
+  "testTime": 1536094315704,
+  "engineVersion": "1.32.3",
+  "criteriaVersion": "2009p",
+  "endpoints": [
+    {
+      "ipAddress": "64.41.200.100",
+      "serverName": "www.ssllabs.com",
+      "statusMessage": "Ready",
+      "grade": "A+",
+      "gradeTrustIgnored": "A+",
+      "hasWarnings": false,
+      "isExceptional": true,
+      "progress": 100,
+      "duration": 50248,
+      "delegation": 1,
+      "details": {
+        "hostStartTime": 1536094265228,
+        "certChains": [],
+        "protocols": [
+          {
+            "id": 769,
+            "name": "TLS",
+            "version": "1.0"
+          },
+          {
+            "id": 770,
+            "name": "TLS",
+            "version": "1.1"
+          },
+          {
+            "id": 771,
+            "name": "TLS",
+            "version": "1.2"
+          }
+        ],
+        "suites": [],
+        "namedGroups": {
+          "list": [
+            {
+              "id": 23,
+              "name": "secp256r1",
+              "bits": 256,
+              "namedGroupType": "EC"
+            }
+          ]
+        },
+        "serverSignature": "Apache",
+        "prefixDelegation": false,
+        "nonPrefixDelegation": true,
+        "vulnBeast": true,
+        "renegSupport": 2,
+        "sessionResumption": 2,
+        "compressionMethods": 0,
+        "supportsNpn": false,
+        "supportsAlpn": false,
+        "sessionTickets": 0,
+        "ocspStapling": false,
+        "sniRequired": false,
+        "httpStatusCode": 302,
+        "httpForwarding": "https://www.ssllabs.com",
+        "supportsRc4": false,
+        "rc4WithModern": false,
+        "rc4Only": false,
+        "forwardSecrecy": 4,
+        "supportsAead": true,
+        "protocolIntolerance": 0,
+        "miscIntolerance": 0,
+        "sims": {},
+        "heartbleed": false,
+        "heartbeat": false,
+        "openSslCcs": 1,
+        "openSSLLuckyMinus20": 1,
+        "ticketbleed": 1,
+        "bleichenbacher": 1,
+        "poodle": false,
+        "poodleTls": 1,
+        "fallbackScsv": true,
+        "freak": false,
+        "hasSct": 1,
+        "dhPrimes": [
+          "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aacaa68ffffffffffffffff"
+        ],
+        "dhUsesKnownPrimes": 0,
+        "dhYsReuse": false,
+        "ecdhParameterReuse": false,
+        "logjam": false,
+        "hstsPolicy": {
+          "LONG_MAX_AGE": 15552000,
+          "header": "max-age=31536000",
+          "status": "present",
+          "maxAge": 31536000,
+          "directives": {
+            "max-age": "31536000"
+          }
+        },
+        "hstsPreloads": [
+          {
+            "source": "Chrome",
+            "hostname": "ssllabs.com",
+            "status": "absent",
+            "sourceTime": 1536091860868
+          },
+          {
+            "source": "Edge",
+            "hostname": "ssllabs.com",
+            "status": "absent",
+            "sourceTime": 1536091501425
+          },
+          {
+            "source": "Firefox",
+            "hostname": "ssllabs.com",
+            "status": "absent",
+            "sourceTime": 1536091501425
+          },
+          {
+            "source": "IE",
+            "hostname": "ssllabs.com",
+            "status": "absent",
+            "sourceTime": 1536091501425
+          }
+        ],
+        "hpkpPolicy": {
+          "status": "absent",
+          "pins": [],
+          "matchedPins": [],
+          "directives": []
+        },
+        "hpkpRoPolicy": {
+          "status": "absent",
+          "pins": [],
+          "matchedPins": [],
+          "directives": []
+        },
+        "staticPkpPolicy": {
+          "status": "absent",
+          "pins": [],
+          "matchedPins": [],
+          "forbiddenPins": [],
+          "matchedForbiddenPins": []
+        },
+        "httpTransactions": [
+          {
+            "requestUrl": "https://ssllabs.com/",
+            "statusCode": 302,
+            "requestLine": "GET / HTTP/1.1",
+            "requestHeaders": [
+              "Host: ssllabs.com",
+              "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101 Firefox/45.0",
+              "Accept: */*",
+              "Connection: Close"
+            ],
+            "responseLine": "HTTP/1.1 302 Found",
+            "responseHeadersRaw": [
+              "Date: Tue, 04 Sep 2018 20:51:08 GMT",
+              "Server: Apache",
+              "X-Content-Type-Options: nosniff",
+              "X-Xss-Protection: 1; mode=block",
+              "Strict-Transport-Security: max-age=31536000",
+              "Location: https://www.ssllabs.com/",
+              "Content-Length: 0",
+              "Set-Cookie: JSESSIONID=B1135C9F9E674ED80F7D18A9FBFD4AE8; Path=/; Secure; HttpOnly",
+              "X-Frame-Options: DENY",
+              "Content-Security-Policy: default-src 'self' ssllabs.com *.ssllabs.com *.marketo.net 797-eni-742.mktoresp.com cdnjs.cloudflare.com;",
+              "Connection: close"
+            ],
+            "responseHeaders": [
+              {
+                "name": "Date",
+                "value": "Tue, 04 Sep 2018 20:51:08 GMT"
+              },
+              {
+                "name": "Server",
+                "value": "Apache"
+              },
+              {
+                "name": "X-Content-Type-Options",
+                "value": "nosniff"
+              },
+              {
+                "name": "X-Xss-Protection",
+                "value": "1; mode=block"
+              },
+              {
+                "name": "Strict-Transport-Security",
+                "value": "max-age=31536000"
+              },
+              {
+                "name": "Location",
+                "value": "https://www.ssllabs.com/"
+              },
+              {
+                "name": "Content-Length",
+                "value": "0"
+              },
+              {
+                "name": "Set-Cookie",
+                "value": "JSESSIONID=B1135C9F9E674ED80F7D18A9FBFD4AE8; Path=/; Secure; HttpOnly"
+              },
+              {
+                "name": "X-Frame-Options",
+                "value": "DENY"
+              },
+              {
+                "name": "Content-Security-Policy",
+                "value": "default-src 'self' ssllabs.com *.ssllabs.com *.marketo.net 797-eni-742.mktoresp.com cdnjs.cloudflare.com;"
+              },
+              {
+                "name": "Connection",
+                "value": "close"
+              }
+            ],
+            "fragileServer": false
+          }
+        ],
+        "drownHosts": [],
+        "drownErrors": false,
+        "drownVulnerable": false
+      }
+    }
+  ],
+}
