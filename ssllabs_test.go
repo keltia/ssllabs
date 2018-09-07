@@ -416,7 +416,7 @@ func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 	gock.InterceptClient(c.client)
 	defer gock.RestoreClient(c.client)
 
-	opts["fromCache"] = "on"
+	opts := map[string]string{"fromCache": "on"}
 
 	grade, err := c.GetGrade(site, opts)
 	require.NoError(t, err)
