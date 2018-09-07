@@ -369,7 +369,6 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 		BodyString(string(fta))
 
 	c, err := NewClient()
-	c.level = 2
 	require.NoError(t, err)
 	require.NotNil(t, c)
 	require.NotEmpty(t, c)
