@@ -338,7 +338,6 @@ type Cert struct {
 	NotAfter               int64     `json:"notAfter"`
 	IssuerSubject          string    `json:"issuerSubject"`
 	SigAlg                 string    `json:"sigAlg"`
-	IssuerLabel            string    `json:"issuerLabel"`
 	RevocationInfo         int       `json:"revocationInfo"`
 	CrlURIs                []string  `json:"crlURIs"`
 	OcspURIs               []string  `json:"ocspURIs"`
