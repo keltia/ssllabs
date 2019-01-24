@@ -8,7 +8,6 @@ This is just a very short example.
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -21,6 +20,9 @@ import (
 const (
 	// MyVersion is for the app
 	MyVersion = "0.2.0"
+
+	// Display remote info
+	InfoFmt = "SSLLabs Info\nEngine/%s Criteria/%s Max assessments/%d\nMessage: %s\n"
 )
 
 var (
@@ -48,14 +50,6 @@ func init() {
 		os.Exit(0)
 	}
 
-	if fInfo {
-		fmt.Fprintf(os.Stderr, "SSLLabs server info:\n")
-		return
-	}
-
-	if len(flag.Args()) == 0 {
-		log.Fatalf("You must give at least one site name!")
-	}
 }
 
 func main() {
@@ -84,9 +78,12 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: %v", err)
 			os.Exit(1)
 		}
-		jinfo, err := json.Marshal(info)
-		fmt.Fprintf(os.Stderr, "SSLLabs Info\n%#s", string(jinfo))
+		fmt.Fprintf(os.Stderr, InfoFmt, info.EngineVersion, info.CriteriaVersion, info.MaxAssessments, info.Messages[0])
 		os.Exit(0)
+	}
+
+	if len(flag.Args()) == 0 {
+		log.Fatalf("You must give at least one site name!")
 	}
 
 	if fDetailed {
