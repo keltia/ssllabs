@@ -40,6 +40,7 @@ type Client struct {
 	level     int
 	timeout   time.Duration
 	retries   int
+	force     bool
 	proxyauth string
 
 	client *http.Client
@@ -51,6 +52,7 @@ type Config struct {
 	Log     int
 	Timeout int
 	Retries int
+	Force   bool // set fromCache to "off"
 }
 
 // NewClient create the context for new connections
@@ -63,6 +65,7 @@ func NewClient(cnf ...Config) (*Client, error) {
 			baseurl: baseURL,
 			timeout: DefaultWait,
 			retries: DefaultRetry,
+			force:   false,
 		}
 	} else {
 		c = &Client{
@@ -70,6 +73,7 @@ func NewClient(cnf ...Config) (*Client, error) {
 			level:   cnf[0].Log,
 			retries: cnf[0].Retries,
 			timeout: toDuration(cnf[0].Timeout) * time.Second,
+			force:   cnf[0].Force,
 		}
 
 		if cnf[0].Timeout == 0 {
@@ -139,7 +143,7 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		}
 	}
 
-	lr, err := c.Analyze(site, false, myopts...)
+	lr, err := c.Analyze(site, c.force, myopts...)
 	if err != nil {
 		return "Z", errors.Wrap(err, "GetGrade")
 	}
@@ -197,6 +201,10 @@ func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (
 		if err != nil {
 			return &Host{}, errors.Wrap(err, "analyze/trigger")
 		}
+
+		// When forcing the whole test, retries are set much higher because scanning
+		// can take a long time
+		c.retries = c.retries * 3
 
 		// Have a look at the body
 		c.debug("raw=%v", string(raw))
