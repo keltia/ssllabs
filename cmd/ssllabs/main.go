@@ -19,7 +19,7 @@ import (
 
 const (
 	// MyVersion is for the app
-	MyVersion = "0.2.0"
+	MyVersion = "0.3.0"
 
 	// Display remote info
 	InfoFmt = "SSLLabs Info\nEngine/%s Criteria/%s Max assessments/%d\nMessage: %s\n"
@@ -28,6 +28,7 @@ const (
 var (
 	fDebug       bool
 	fDetailed    bool
+	fForce       bool
 	fInfo        bool
 	fVerbose     bool
 	fShowVersion bool
@@ -38,6 +39,7 @@ var (
 
 func init() {
 	flag.BoolVar(&fDetailed, "d", false, "Get a detailed report")
+	flag.BoolVar(&fForce, "F", false, "Do not use SSLLabs cache")
 	flag.BoolVar(&fInfo, "I", false, "Get SSLLabs info.")
 	flag.BoolVar(&fVerbose, "v", false, "Verbose mode")
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
@@ -45,7 +47,7 @@ func init() {
 	flag.Parse()
 
 	if fShowVersion {
-		fmt.Fprintf(os.Stderr, "%s version %s API v3\n",
+		fmt.Fprintf(os.Stderr, "%s/%s API/%s Env3\n",
 			MyName, ssllabs.Version())
 		os.Exit(0)
 	}
@@ -66,8 +68,14 @@ func main() {
 		fVerbose = true
 	}
 
+	var cfg = ssllabs.Config{Log: level}
+
+	if fForce {
+		cfg.Force = true
+	}
+
 	// Setup client
-	c, err := ssllabs.NewClient(ssllabs.Config{Log: level})
+	c, err := ssllabs.NewClient(cfg)
 	if err != nil {
 		log.Fatalf("error setting up client: %v", err)
 	}
@@ -96,7 +104,7 @@ func main() {
 		// Just dump the json
 		fmt.Printf("%v\n", report)
 	} else {
-		fmt.Fprintf(os.Stderr, "%s Wrapper: %s API version %s\n\n",
+		fmt.Fprintf(os.Stderr, "%s/%s API/%s\n\n",
 			MyName, MyVersion, ssllabs.Version())
 		grade, err := c.GetGrade(site)
 		if err != nil {
