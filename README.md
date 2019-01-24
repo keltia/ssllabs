@@ -165,7 +165,7 @@ and it should be picked up. On Windows, the file will be located at
 
 ## License
 
-The [BSD 2-Clause license](https://github.com/keltia/ssllabs/blog/master/LICENSE.md).
+The [BSD 2-Clause license](https://github.com/keltia/ssllabs/blob/master/LICENSE.md).
 
 # Contributing
 
