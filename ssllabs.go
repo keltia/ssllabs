@@ -28,7 +28,7 @@ const (
 	DefaultRetry = 5
 
 	// MyVersion is the API version
-	MyVersion = "0.10.0"
+	MyVersion = "0.11.0"
 
 	// MyName is the name used for the configuration
 	MyName = "ssllabs"
