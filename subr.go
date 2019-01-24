@@ -36,7 +36,7 @@ func (c *Client) prepareRequest(method, what string, opts map[string]string) (re
 	endPoint := fmt.Sprintf("%s/%s", c.baseurl, what)
 
 	baseURL := AddQueryParameters(endPoint, opts)
-	c.verbose("Options:\n%v", opts)
+	c.debug("Options:\n%v", opts)
 	c.debug("baseURL: %s", baseURL)
 
 	req, _ = http.NewRequest(method, baseURL, nil)
