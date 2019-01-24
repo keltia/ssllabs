@@ -78,6 +78,7 @@ OPTIONS
 | Log     | int  | 1: verbose, 2: debug (default: 0) |
 | Retries | int  | Number of retries when not FINISHED (default: 5) |
 | Refresh | bool | Force refresh of the sites (default: false) |
+| Force   | bool | Force SSLLabs to rescan the site (default: false) |
 
 The easiest call is `GetGrade`:
 
