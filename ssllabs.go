@@ -158,8 +158,32 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 }
 
 // GetDetailedReport returns the full report
-func (c *Client) GetDetailedReport(site string) (Host, error) {
-	return Host{}, nil
+func (c *Client) GetDetailedReport(site string, myopts ...map[string]string) (Host, error) {
+	if site == "" {
+		return Host{}, errors.New("empty site")
+	}
+
+	opts := map[string]string{"all": "done"}
+
+	// Override default options
+	if myopts != nil {
+		for _, o := range myopts {
+			opts = mergeOptions(opts, o)
+		}
+	}
+
+	lr, err := c.Analyze(site, c.force, myopts...)
+	if err != nil {
+		return Host{}, errors.Wrap(err, "GetGrade")
+	}
+
+	if len(lr.Endpoints) != 0 {
+		if lr.Endpoints[0].StatusMessage != "Ready" {
+			return Host{}, fmt.Errorf("error: %s", lr.Endpoints[0].StatusMessage)
+		}
+		return *lr, errors.Wrapf(err, "GetGrade - %v", lr)
+	}
+	return Host{}, errors.New("no endpoint")
 }
 
 // Analyze submit the given host for checking
