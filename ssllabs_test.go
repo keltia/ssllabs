@@ -86,7 +86,6 @@ func TestClient_AnalyzeForceFull(t *testing.T) {
 	opts1 := map[string]string{
 		"host":           site,
 		"startNew":       "on",
-		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
 		"fromCache":      "on",
@@ -560,8 +559,6 @@ func TestClient_GetDetailedReport(t *testing.T) {
 
 	require.NoError(t, json.Compact(&buf1, jr))
 
-	t.Logf("%s", buf.String())
-	t.Logf("%s", buf1.String())
 	assert.NoError(t, err)
 	//assert.EqualValues(t, buf.String(), buf1.String())
 }

@@ -45,13 +45,6 @@ func init() {
 	flag.BoolVar(&fDebug, "D", false, "Debug mode")
 	flag.BoolVar(&fShowVersion, "V", false, "Display version & exit.")
 	flag.Parse()
-
-	if fShowVersion {
-		fmt.Fprintf(os.Stderr, "%s/%s API/%s Env3\n",
-			MyName, ssllabs.Version())
-		os.Exit(0)
-	}
-
 }
 
 func main() {
@@ -78,6 +71,12 @@ func main() {
 	c, err := ssllabs.NewClient(cfg)
 	if err != nil {
 		log.Fatalf("error setting up client: %v", err)
+	}
+
+	if fShowVersion {
+		fmt.Fprintf(os.Stderr, "%s/%s API/%s(v3)\n",
+			MyName, MyVersion, ssllabs.Version())
+		os.Exit(0)
 	}
 
 	if fInfo {
