@@ -1,6 +1,7 @@
 package ssllabs
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -88,7 +89,7 @@ func TestClient_AnalyzeForceFull(t *testing.T) {
 		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
-		"fromCache":      "off",
+		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
 
@@ -97,7 +98,7 @@ func TestClient_AnalyzeForceFull(t *testing.T) {
 		"all":            "done",
 		"publish":        "off",
 		"maxAge":         "24",
-		"fromCache":      "off",
+		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
 
@@ -226,8 +227,6 @@ func TestClient_AnalyzeCacheFullOpts(t *testing.T) {
 
 	err = json.Unmarshal(fta, &jfta)
 	require.NoError(t, err)
-
-	opts["fromCache"] = "off"
 
 	an, err := c.Analyze(site, false, opts)
 	require.NoError(t, err)
@@ -512,6 +511,61 @@ func TestClient_GetEndpointData2(t *testing.T) {
 	assert.EqualValues(t, &jfta, data)
 }
 
+func TestClient_GetDetailedReport(t *testing.T) {
+	Before(t)
+
+	defer gock.Off()
+
+	site := "www.ssllabs.com"
+
+	c, err := NewClient()
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	fta, err := ioutil.ReadFile("testdata/ssllabs-full.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fta)
+
+	var buf bytes.Buffer
+
+	require.NoError(t, json.Compact(&buf, fta))
+
+	// Default parameters
+	opts := map[string]string{
+		"host":           site,
+		"publish":        "off",
+		"maxAge":         "24",
+		"fromCache":      "on",
+		"ignoreMismatch": "on",
+		"all":            "done",
+	}
+
+	gock.New(baseURL).
+		Get("/analyze").
+		MatchParams(opts).
+		Reply(200).
+		BodyString(string(fta))
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	r, err := c.GetDetailedReport(site)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, r)
+
+	jr, err := json.Marshal(r)
+
+	var buf1 bytes.Buffer
+
+	require.NoError(t, json.Compact(&buf1, jr))
+
+	t.Logf("%s", buf.String())
+	t.Logf("%s", buf1.String())
+	assert.NoError(t, err)
+	//assert.EqualValues(t, buf.String(), buf1.String())
+}
+
 func TestClient_GetEndpointData3(t *testing.T) {
 	Before(t)
 
@@ -536,20 +590,4 @@ func TestClient_GetEndpointData3(t *testing.T) {
 func TestVersion(t *testing.T) {
 	v := Version()
 	assert.Equal(t, MyVersion, v)
-}
-
-func TestClient_GetDetailedReport(t *testing.T) {
-	site := ""
-
-	c, err := NewClient()
-	require.NoError(t, err)
-	require.NotNil(t, c)
-	require.NotEmpty(t, c)
-
-	gock.InterceptClient(c.client)
-	defer gock.RestoreClient(c.client)
-
-	r, err := c.GetDetailedReport(site)
-	assert.NoError(t, err)
-	assert.Empty(t, r)
 }

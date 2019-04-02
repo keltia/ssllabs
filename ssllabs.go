@@ -143,7 +143,7 @@ func (c *Client) GetGrade(site string, myopts ...map[string]string) (string, err
 		}
 	}
 
-	lr, err := c.Analyze(site, c.force, myopts...)
+	lr, err := c.Analyze(site, c.force, []map[string]string{opts}...)
 	if err != nil {
 		return "Z", errors.Wrap(err, "GetGrade")
 	}
@@ -163,7 +163,9 @@ func (c *Client) GetDetailedReport(site string, myopts ...map[string]string) (Ho
 		return Host{}, errors.New("empty site")
 	}
 
-	opts := map[string]string{"all": "done"}
+	opts := map[string]string{
+		"all": "done",
+	}
 
 	// Override default options
 	if myopts != nil {
@@ -172,16 +174,18 @@ func (c *Client) GetDetailedReport(site string, myopts ...map[string]string) (Ho
 		}
 	}
 
-	lr, err := c.Analyze(site, c.force, myopts...)
+	c.debug("opts=%v", opts)
+
+	lr, err := c.Analyze(site, c.force, []map[string]string{opts}...)
 	if err != nil {
-		return Host{}, errors.Wrap(err, "GetGrade")
+		return Host{}, errors.Wrap(err, "GetDetailedReport")
 	}
 
 	if len(lr.Endpoints) != 0 {
 		if lr.Endpoints[0].StatusMessage != "Ready" {
 			return Host{}, fmt.Errorf("error: %s", lr.Endpoints[0].StatusMessage)
 		}
-		return *lr, errors.Wrapf(err, "GetGrade - %v", lr)
+		return *lr, errors.Wrapf(err, "GetDetailedReport - %v", lr)
 	}
 	return Host{}, errors.New("no endpoint")
 }
@@ -199,7 +203,7 @@ func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (
 		"host":           site,
 		"publish":        "off",
 		"maxAge":         "24",
-		"fromCache":      "off",
+		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
 
@@ -218,8 +222,9 @@ func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (
 
 	// Trigger the analyze
 	if force {
-		opts["startNew"] = "on"
 		opts["all"] = "done"
+		opts["startNew"] = "on"
+		opts["fromCache"] = "on"
 
 		raw, err := c.callAPI("analyze", "", opts)
 		if err != nil {
@@ -232,8 +237,6 @@ func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (
 
 		// Have a look at the body
 		c.debug("raw=%v", string(raw))
-	} else {
-		opts["fromCache"] = "on"
 	}
 
 	retry := 0
