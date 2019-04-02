@@ -98,6 +98,7 @@ func TestClient_AnalyzeForceFull(t *testing.T) {
 		"publish":        "off",
 		"maxAge":         "24",
 		"fromCache":      "off",
+		"startNew":       "on",
 		"ignoreMismatch": "on",
 	}
 
