@@ -224,7 +224,7 @@ func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (
 	if force {
 		opts["all"] = "done"
 		opts["startNew"] = "on"
-		opts["fromCache"] = "on"
+		opts["fromCache"] = "off"
 
 		raw, err := c.callAPI("analyze", "", opts)
 		if err != nil {
