@@ -538,7 +538,7 @@ func TestVersion(t *testing.T) {
 	assert.Equal(t, MyVersion, v)
 }
 
-func TestClient_GetDetailedReport(t *testing.T) {
+func TestClient_GetDetailedReport_None(t *testing.T) {
 	site := ""
 
 	c, err := NewClient()
@@ -550,6 +550,25 @@ func TestClient_GetDetailedReport(t *testing.T) {
 	defer gock.RestoreClient(c.client)
 
 	r, err := c.GetDetailedReport(site)
-	assert.NoError(t, err)
+	assert.Error(t, err)
 	assert.Empty(t, r)
+}
+
+func TestClient_GetDetailedReport_Good(t *testing.T) {
+	Before(t)
+	defer gock.Off()
+
+	site := "www.ssllabs.com"
+
+	c, err := NewClient()
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	r, err := c.GetDetailedReport(site)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, r)
 }
