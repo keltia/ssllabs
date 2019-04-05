@@ -61,7 +61,7 @@ func TestNewClient5(t *testing.T) {
 	assert.NotEmpty(t, c)
 
 	assert.Equal(t, baseURL, c.baseurl)
-	assert.Equal(t, toDuration(10)*time.Second, c.timeout)
+	assert.Equal(t, time.Duration(10)*time.Second, c.timeout)
 }
 
 func Before(t *testing.T) {
