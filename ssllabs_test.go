@@ -12,10 +12,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	testURL = "http://localhost:10000"
-)
-
 func TestNewClient(t *testing.T) {
 	c, err := NewClient()
 	assert.NoError(t, err)
