@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
@@ -48,6 +49,19 @@ func TestNewClient4(t *testing.T) {
 	assert.NotEmpty(t, c)
 
 	assert.Equal(t, baseURL, c.baseurl)
+	assert.Equal(t, 2, c.level)
+}
+
+func TestNewClient5(t *testing.T) {
+	conf := Config{Log: 1, Timeout: 10}
+	c, err := NewClient(conf)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, c)
+	assert.NotEmpty(t, c)
+
+	assert.Equal(t, baseURL, c.baseurl)
+	assert.Equal(t, toDuration(10)*time.Second, c.timeout)
 }
 
 func Before(t *testing.T) {
