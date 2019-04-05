@@ -180,10 +180,6 @@ type ProtocolSuites struct {
 	Preference bool
 }
 
-func (ls *ProtocolSuites) len() int {
-	return len(ls.List)
-}
-
 // Suite describes a single protocol
 type Suite struct {
 	ID             int `json:"id"`
