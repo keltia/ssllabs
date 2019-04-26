@@ -123,3 +123,9 @@ func TestMergeOptionsDelete(t *testing.T) {
 	require.NotEmpty(t, o3)
 	assert.EqualValues(t, ot, o3)
 }
+
+func TestProtocolSuites_Len(t *testing.T) {
+	ps := ProtocolSuites{List: []Suite{}}
+
+	assert.Equal(t, 0, ps.len())
+}

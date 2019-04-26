@@ -115,8 +115,12 @@ type EndpointDetails struct {
 	Heartbeat                      bool
 	OpenSSLCcs                     int `json:"openSslCcs"`
 	OpenSSLLuckyMinus20            int `json:"openSSLLuckyMinus20"`
-	Ticketbleed                    int
-	Bleichenbacher                 int
+	Ticketbleed                    int `json:"ticketbleed"`
+	Bleichenbacher                 int `json:"bleichenbacher"`
+	ZombiePoodle                   int `json:"zombiePoodle"`
+	GoldenPoodle                   int `json:"goldenPoodle"`
+	ZeroLengthPaddingOracle        int `json:"zeroLengthPaddingOracle"`
+	SleepingPoodle                 int `json:"sleepingPoodle"`
 	Poodle                         bool
 	PoodleTLS                      int  `json:"poodleTLS"`
 	FallbackScsv                   bool `json:"fallbackScsv"`
@@ -178,10 +182,6 @@ type ProtocolSuites struct {
 	Protocol   int
 	List       []Suite
 	Preference bool
-}
-
-func (ls *ProtocolSuites) len() int {
-	return len(ls.List)
 }
 
 // Suite describes a single protocol

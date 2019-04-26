@@ -103,3 +103,7 @@ func mergeOptions(opts, o map[string]string) map[string]string {
 	}
 	return opts
 }
+
+func (ls *ProtocolSuites) len() int {
+	return len(ls.List)
+}
