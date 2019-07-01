@@ -110,7 +110,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("impossible to get grade for '%s': %v\n", site, err)
 		}
-		d := time.Unix(report.TestTime, 0).Local()
+		d := time.Unix(report.TestTime/1000, 0).Local()
 		fmt.Printf("Grade for '%s' is %s (%s)\n", site, grade, d)
 	}
 }
