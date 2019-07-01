@@ -20,7 +20,7 @@ import (
 
 const (
 	// MyVersion is for the app
-	MyVersion = "0.3.0"
+	MyVersion = "0.4.0"
 
 	// Display remote info
 	InfoFmt = "SSLLabs Info\nEngine/%s Criteria/%s Max assessments/%d\nMessage: %s\n"
