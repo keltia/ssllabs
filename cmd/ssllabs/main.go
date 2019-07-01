@@ -13,13 +13,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/keltia/ssllabs"
 )
 
 const (
 	// MyVersion is for the app
-	MyVersion = "0.3.0"
+	MyVersion = "0.4.0"
 
 	// Display remote info
 	InfoFmt = "SSLLabs Info\nEngine/%s Criteria/%s Max assessments/%d\nMessage: %s\n"
@@ -93,22 +94,23 @@ func main() {
 		log.Fatalf("You must give at least one site name!")
 	}
 
+	report, err := c.GetDetailedReport(site)
+	if err != nil {
+		log.Fatalf("impossible to get grade for '%s'\n", site)
+	}
+
+	fmt.Fprintf(os.Stderr, "%s/%s API/%s\n\n",
+		MyName, MyVersion, ssllabs.Version())
+
 	if fDetailed {
-
-		report, err := c.GetDetailedReport(site)
-		if err != nil {
-			log.Fatalf("impossible to get grade for '%s'\n", site)
-		}
-
 		// Just dump the json
 		fmt.Printf("%v\n", report)
 	} else {
-		fmt.Fprintf(os.Stderr, "%s/%s API/%s\n\n",
-			MyName, MyVersion, ssllabs.Version())
 		grade, err := c.GetGrade(site)
 		if err != nil {
 			log.Fatalf("impossible to get grade for '%s': %v\n", site, err)
 		}
-		fmt.Printf("Grade for '%s' is %s\n", site, grade)
+		d := time.Unix(report.TestTime/1000, 0).Local()
+		fmt.Printf("Grade for '%s' is %s (%s)\n", site, grade, d)
 	}
 }
