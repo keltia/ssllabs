@@ -96,7 +96,7 @@ func main() {
 
 	report, err := c.GetDetailedReport(site)
 	if err != nil {
-		log.Fatalf("impossible to get grade for '%s'\n", site)
+		log.Fatalf("impossible to get grade for '%s': %v\n", site, err)
 	}
 
 	fmt.Fprintf(os.Stderr, "%s/%s API/%s\n\n",

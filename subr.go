@@ -15,6 +15,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+const (
+	HttpRetryLater = 529
+)
+
 func myRedirect(req *http.Request, via []*http.Request) error {
 	return nil
 }
@@ -69,7 +73,10 @@ func (c *Client) callAPI(what, sbody string, opts map[string]string) ([]byte, er
 
 	c.debug("resp=%#v", resp)
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == HttpRetryLater {
+		c.debug("NOK/529")
+		return []byte{}, errors.Wrap(err, "529 received")
+	} else if resp.StatusCode == http.StatusOK {
 
 		c.debug("status OK")
 		c.debug("read body")
