@@ -120,6 +120,15 @@ func TestClient_AnalyzeForceFull(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, ftc)
 
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
+
 	gock.New(baseURL).
 		Get("/analyze").
 		MatchParams(opts1).
@@ -151,6 +160,36 @@ func TestClient_AnalyzeForceFull(t *testing.T) {
 	assert.EqualValues(t, &jfta, an)
 }
 
+// Start fresh, full restults, no options
+func TestClient_AnalyzeForceFull_BadInfo(t *testing.T) {
+	Before(t)
+
+	defer gock.Off()
+
+	site := "ssllabs.com"
+
+	fti, err := ioutil.ReadFile("testdata/info-max.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
+
+	c, err := NewClient()
+	require.NoError(t, err)
+	require.NotNil(t, c)
+	require.NotEmpty(t, c)
+
+	gock.InterceptClient(c.client)
+	defer gock.RestoreClient(c.client)
+
+	an, err := c.Analyze(site, true)
+	require.Error(t, err)
+	assert.Empty(t, an)
+}
+
 // From cache, full restults, no options
 func TestClient_AnalyzeCacheFull(t *testing.T) {
 	Before(t)
@@ -171,6 +210,15 @@ func TestClient_AnalyzeCacheFull(t *testing.T) {
 	ftc, err := ioutil.ReadFile("testdata/ssllabs-full.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, ftc)
+
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
 
 	gock.New(baseURL).
 		Get("/analyze").
@@ -218,6 +266,15 @@ func TestClient_AnalyzeCacheFullOpts(t *testing.T) {
 	fta, err := ioutil.ReadFile("testdata/ssllabs-full.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
+
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
 
 	gock.New(baseURL).
 		Get("/analyze").
