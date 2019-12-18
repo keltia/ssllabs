@@ -222,13 +222,15 @@ func (c *Client) Analyze(site string, force bool, myopts ...map[string]string) (
 
 	// Call Info() to see whether we are allowed to call Analyze
 	inf, err := c.Info()
+	c.debug("inf=%#v", inf)
 	if err != nil {
 		return &Host{}, errors.Wrap(err, "Can not call Info()")
 	}
 
 	// Backoff if there is an issue there (avoid 429 error)
 	if inf.CurrentAssessments > inf.MaxAssessments {
-		return &Host{}, errors.Wrapf(err, "max assessment reached: %d", inf.CurrentAssessments)
+		c.debug("max reached")
+		return &Host{}, errors.New(fmt.Sprintf("max assessment reached: %d", inf.CurrentAssessments))
 	}
 
 	// Trigger the analyze
