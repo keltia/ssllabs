@@ -385,6 +385,15 @@ func TestClient_GetGradeLbl(t *testing.T) {
 		"ignoreMismatch": "on",
 	}
 
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
+
 	fta, err := ioutil.ReadFile("testdata/lbl.json")
 	require.NoError(t, err)
 	require.NotEmpty(t, fta)
@@ -423,6 +432,15 @@ func TestClient_GetGradeSSLLabs(t *testing.T) {
 		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
+
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
 
 	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
 	require.NoError(t, err)
@@ -463,6 +481,15 @@ func TestClient_GetGradeSSLLabsOpts(t *testing.T) {
 		"fromCache":      "on",
 		"ignoreMismatch": "on",
 	}
+
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
 
 	fta, err := ioutil.ReadFile("testdata/ssllabs.json")
 	require.NoError(t, err)
@@ -607,6 +634,15 @@ func TestClient_GetDetailedReport(t *testing.T) {
 		"ignoreMismatch": "on",
 		"all":            "done",
 	}
+
+	fti, err := ioutil.ReadFile("testdata/info.json")
+	require.NoError(t, err)
+	require.NotEmpty(t, fti)
+
+	gock.New(baseURL).
+		Get("/info").
+		Reply(200).
+		BodyString(string(fti))
 
 	gock.New(baseURL).
 		Get("/analyze").
